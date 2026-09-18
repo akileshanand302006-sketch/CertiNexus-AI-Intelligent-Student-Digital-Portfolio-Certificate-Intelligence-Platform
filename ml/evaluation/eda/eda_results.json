@@ -1,0 +1,347 @@
+{
+  "total_samples": 605,
+  "total_categories": 11,
+  "categories": [
+    "Academic Achievement",
+    "Certification",
+    "Conference",
+    "Cultural Activity",
+    "Hackathon",
+    "Internship",
+    "Seminar",
+    "Sports",
+    "Technical Competition",
+    "Volunteer Activity",
+    "Workshop"
+  ],
+  "columns": [
+    "document_id",
+    "raw_text",
+    "clean_text",
+    "certificate_title",
+    "organization",
+    "event",
+    "date",
+    "category",
+    "source"
+  ],
+  "missing_values": {
+    "document_id": 0,
+    "raw_text": 0,
+    "clean_text": 0,
+    "certificate_title": 0,
+    "organization": 0,
+    "event": 0,
+    "date": 0,
+    "category": 0,
+    "source": 0
+  },
+  "duplicate_texts": 0,
+  "class_distribution": {
+    "Academic Achievement": 55,
+    "Certification": 55,
+    "Conference": 55,
+    "Cultural Activity": 55,
+    "Hackathon": 55,
+    "Internship": 55,
+    "Seminar": 55,
+    "Sports": 55,
+    "Technical Competition": 55,
+    "Volunteer Activity": 55,
+    "Workshop": 55
+  },
+  "imbalance_ratio": 1.0,
+  "majority_class": "Conference",
+  "minority_class": "Conference",
+  "text_statistics": {
+    "text_length": {
+      "mean": 292.5,
+      "median": 292.0,
+      "std": 32.3,
+      "min": 198,
+      "max": 386
+    },
+    "word_count": {
+      "mean": 39.6,
+      "median": 39.0,
+      "std": 5.1,
+      "min": 27,
+      "max": 56
+    }
+  },
+  "per_category_text_stats": {
+    "Conference": {
+      "mean_text_length": 318.9,
+      "mean_word_count": 42.7
+    },
+    "Sports": {
+      "mean_text_length": 280.2,
+      "mean_word_count": 37.4
+    },
+    "Hackathon": {
+      "mean_text_length": 307.9,
+      "mean_word_count": 42.0
+    },
+    "Workshop": {
+      "mean_text_length": 294.6,
+      "mean_word_count": 39.7
+    },
+    "Internship": {
+      "mean_text_length": 330.6,
+      "mean_word_count": 46.6
+    },
+    "Academic Achievement": {
+      "mean_text_length": 285.5,
+      "mean_word_count": 40.6
+    },
+    "Technical Competition": {
+      "mean_text_length": 284.8,
+      "mean_word_count": 36.2
+    },
+    "Cultural Activity": {
+      "mean_text_length": 279.2,
+      "mean_word_count": 36.3
+    },
+    "Seminar": {
+      "mean_text_length": 283.6,
+      "mean_word_count": 39.3
+    },
+    "Volunteer Activity": {
+      "mean_text_length": 272.0,
+      "mean_word_count": 37.5
+    },
+    "Certification": {
+      "mean_text_length": 280.3,
+      "mean_word_count": 36.8
+    }
+  },
+  "vocabulary": {
+    "total_tokens": 23931,
+    "unique_tokens": 2453,
+    "vocabulary_richness": 0.1025,
+    "top_30_terms": {
+      "certificate": 470,
+      "date:": 284,
+      "certificate.": 248,
+      "organized": 214,
+      "awarded": 122,
+      "technology": 121,
+      "conference": 112,
+      "institute": 110,
+      "id:": 109,
+      "certify": 107,
+      "technical": 106,
+      "event": 102,
+      "certifies": 101,
+      "demonstrated": 96,
+      "academic": 94,
+      "competition": 91,
+      "participated": 89,
+      "college": 89,
+      "national": 86,
+      "held": 86,
+      "workshop": 82,
+      "program": 78,
+      "student": 78,
+      "engineering": 78,
+      "development": 76,
+      "intern": 76,
+      "conducted": 76,
+      "participant.": 74,
+      "completed": 71,
+      "seminar": 69
+    }
+  },
+  "top_terms_per_category": {
+    "Conference": {
+      "conference": 112,
+      "certificate": 50,
+      "paper": 45,
+      "organized": 36,
+      "international": 35,
+      "certificate.": 25,
+      "date:": 23,
+      "national": 22,
+      "advances": 22,
+      "held": 21,
+      "research": 21,
+      "academic": 18,
+      "computer": 17,
+      "keynote": 16,
+      "college": 16
+    },
+    "Sports": {
+      "sports": 61,
+      "certificate": 48,
+      "certificate.": 26,
+      "participant.": 24,
+      "result:": 23,
+      "date:": 23,
+      "institute": 22,
+      "tournament": 22,
+      "university": 22,
+      "event": 22,
+      "annual": 22,
+      "athletic": 22,
+      "day": 22,
+      "awarded": 19,
+      "place.": 19
+    },
+    "Hackathon": {
+      "hackathon": 64,
+      "coding": 38,
+      "organized": 37,
+      "certificate": 34,
+      "date:": 26,
+      "challenge": 25,
+      "certificate.": 24,
+      "hours": 24,
+      "team": 24,
+      "technology": 23,
+      "hours.": 20,
+      "innovative": 20,
+      "participant": 19,
+      "problem": 17,
+      "participated": 16
+    },
+    "Workshop": {
+      "workshop": 78,
+      "certificate": 50,
+      "training": 28,
+      "included": 22,
+      "program": 19,
+      "practical": 19,
+      "date:": 19,
+      "college": 19,
+      "completed": 19,
+      "organized": 18,
+      "hands-on": 18,
+      "duration:": 18,
+      "days": 17,
+      "development": 16,
+      "conducted": 16
+    },
+    "Internship": {
+      "intern": 76,
+      "internship": 45,
+      "development": 42,
+      "engineering": 32,
+      "date:": 28,
+      "training": 26,
+      "worked": 25,
+      "professional": 24,
+      "software": 21,
+      "certificate": 21,
+      "certify": 20,
+      "demonstrated": 20,
+      "certificate.": 19,
+      "completed": 19,
+      "duration:": 19
+    },
+    "Academic Achievement": {
+      "academic": 76,
+      "certificate": 49,
+      "student": 37,
+      "awarded": 32,
+      "outstanding": 27,
+      "science": 24,
+      "technology": 24,
+      "performance": 24,
+      "certify": 19,
+      "exceptional": 19,
+      "institute": 18,
+      "engineering": 18,
+      "excellence": 17,
+      "college": 16,
+      "date:": 16
+    },
+    "Technical Competition": {
+      "competition": 52,
+      "certificate": 50,
+      "technical": 47,
+      "date:": 31,
+      "organized": 30,
+      "result:": 24,
+      "coding": 24,
+      "contest": 21,
+      "awarded": 18,
+      "problems": 18,
+      "event": 17,
+      "participant.": 17,
+      "standing:": 16,
+      "national": 16,
+      "excellence": 15
+    },
+    "Cultural Activity": {
+      "certificate": 55,
+      "cultural": 51,
+      "date:": 37,
+      "artistic": 35,
+      "event": 32,
+      "participated": 25,
+      "participant.": 23,
+      "held": 22,
+      "talent": 18,
+      "organized": 18,
+      "achievement:": 18,
+      "competition": 17,
+      "certificate.": 17,
+      "institute": 17,
+      "festival": 17
+    },
+    "Seminar": {
+      "seminar": 69,
+      "attended": 37,
+      "lecture": 36,
+      "certificate.": 34,
+      "organized": 33,
+      "certificate": 27,
+      "guest": 26,
+      "current": 23,
+      "date:": 23,
+      "covered": 22,
+      "industry": 21,
+      "trends": 19,
+      "national": 19,
+      "talk": 18,
+      "computer": 16
+    },
+    "Volunteer Activity": {
+      "volunteer": 57,
+      "service": 56,
+      "certificate.": 45,
+      "date:": 41,
+      "certificate": 34,
+      "community": 33,
+      "organized": 28,
+      "social": 27,
+      "service.": 27,
+      "hours:": 22,
+      "program": 20,
+      "event": 19,
+      "conducted": 18,
+      "outreach": 16,
+      "aimed": 16
+    },
+    "Certification": {
+      "certificate": 52,
+      "certified": 42,
+      "certification": 34,
+      "professional": 28,
+      "completed": 28,
+      "passed": 24,
+      "score:": 24,
+      "credential": 23,
+      "id:": 23,
+      "certifies": 21,
+      "certificate.": 20,
+      "examination": 18,
+      "certification:": 18,
+      "date:": 17,
+      "on:": 17
+    }
+  },
+  "source_distribution": {
+    "synthetic_v1": 605
+  }
+}

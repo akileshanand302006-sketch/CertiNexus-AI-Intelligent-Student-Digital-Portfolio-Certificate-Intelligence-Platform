@@ -1,0 +1,10 @@
+experiment_id,date,dataset_version,preprocessing_version,feature_set,model,parameters,validation_accuracy,macro_precision,macro_recall,macro_f1,weighted_f1,training_time,inference_time,observations
+EXP-001,2026-09-16 05:53,synthetic_v1,v1,tfidf_word,MultinomialNB,"{""alpha"": 1.0}",1.0000,1.0000,1.0000,1.0000,1.0000,0.0046,0.0011,Baseline model with default parameters
+EXP-002,2026-09-16 05:54,synthetic_v1,v1,tfidf_word,LogisticRegression,"{""C"": 0.1, ""class_weight"": ""balanced""}",1.0000,1.0000,1.0000,1.0000,1.0000,8.7346,0.0006,Best CV score: 0.9954
+EXP-003,2026-09-16 05:54,synthetic_v1,v1,tfidf_word,LinearSVM,"{""C"": 0.1, ""class_weight"": null}",1.0000,1.0000,1.0000,1.0000,1.0000,0.4260,0.0012,Best CV score: 0.9954
+EXP-004,2026-09-16 05:54,synthetic_v1,v1,tfidf_word,MultinomialNB_tuned,"{""alpha"": 0.01}",1.0000,1.0000,1.0000,1.0000,1.0000,0.1170,0.0006,Best CV score: 0.9930
+EXP-005,2026-09-16 05:54,synthetic_v1,v1,tfidf_word_char,LogisticRegression,"{""C"": 10.0, ""class_weight"": null}",1.0000,1.0000,1.0000,1.0000,1.0000,3.8470,0.0021,Best CV score: 1.0000
+EXP-006,2026-09-16 05:54,synthetic_v1,v1,tfidf_word_char,LinearSVM,"{""C"": 1.0, ""class_weight"": null}",1.0000,1.0000,1.0000,1.0000,1.0000,1.6403,0.0011,Best CV score: 1.0000
+EXP-007,2026-09-16 05:54,synthetic_v1,v1,tfidf_enriched,LogisticRegression,"{""C"": 10.0, ""class_weight"": null}",1.0000,1.0000,1.0000,1.0000,1.0000,2.4420,0.0008,Best CV score: 1.0000
+EXP-008,2026-09-16 05:54,synthetic_v1,v1,tfidf_enriched,LinearSVM,"{""C"": 1.0, ""class_weight"": null}",1.0000,1.0000,1.0000,1.0000,1.0000,1.4682,0.0007,Best CV score: 1.0000
+EXP-009,2026-09-16 05:54,synthetic_v1,v1,final,LogisticRegression__tfidf_word,"{""note"": ""FINAL TEST EVALUATION""}",1.0000,1.0000,1.0000,1.0000,1.0000,0,0.0140,FINAL HELD-OUT TEST SET EVALUATION
