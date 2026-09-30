@@ -1,0 +1,104 @@
+{
+  "LogisticRegression__tfidf_word": {
+    "model": "LogisticRegression",
+    "feature_set": "tfidf_word",
+    "best_params": {
+      "C": 0.1,
+      "class_weight": "balanced"
+    },
+    "cv_score": 0.9953823953823953,
+    "val_accuracy": 1.0,
+    "val_macro_f1": 1.0,
+    "val_weighted_f1": 1.0,
+    "train_time": 8.734595775604248
+  },
+  "LinearSVM__tfidf_word": {
+    "model": "LinearSVM",
+    "feature_set": "tfidf_word",
+    "best_params": {
+      "C": 0.1,
+      "class_weight": null
+    },
+    "cv_score": 0.9953823953823953,
+    "val_accuracy": 1.0,
+    "val_macro_f1": 1.0,
+    "val_weighted_f1": 1.0,
+    "train_time": 0.4259934425354004
+  },
+  "MultinomialNB_tuned__tfidf_word": {
+    "model": "MultinomialNB_tuned",
+    "feature_set": "tfidf_word",
+    "best_params": {
+      "alpha": 0.01
+    },
+    "cv_score": 0.9929581529581529,
+    "val_accuracy": 1.0,
+    "val_macro_f1": 1.0,
+    "val_weighted_f1": 1.0,
+    "train_time": 0.11704039573669434
+  },
+  "LogisticRegression__tfidf_word_char": {
+    "model": "LogisticRegression",
+    "feature_set": "tfidf_word_char",
+    "best_params": {
+      "C": 10.0,
+      "class_weight": null
+    },
+    "cv_score": 1.0,
+    "val_accuracy": 1.0,
+    "val_macro_f1": 1.0,
+    "val_weighted_f1": 1.0,
+    "train_time": 3.8470306396484375
+  },
+  "LinearSVM__tfidf_word_char": {
+    "model": "LinearSVM",
+    "feature_set": "tfidf_word_char",
+    "best_params": {
+      "C": 1.0,
+      "class_weight": null
+    },
+    "cv_score": 1.0,
+    "val_accuracy": 1.0,
+    "val_macro_f1": 1.0,
+    "val_weighted_f1": 1.0,
+    "train_time": 1.640310287475586
+  },
+  "LogisticRegression__tfidf_enriched": {
+    "model": "LogisticRegression",
+    "feature_set": "tfidf_enriched",
+    "best_params": {
+      "C": 10.0,
+      "class_weight": null
+    },
+    "cv_score": 1.0,
+    "val_accuracy": 1.0,
+    "val_macro_f1": 1.0,
+    "val_weighted_f1": 1.0,
+    "train_time": 2.44195556640625
+  },
+  "LinearSVM__tfidf_enriched": {
+    "model": "LinearSVM",
+    "feature_set": "tfidf_enriched",
+    "best_params": {
+      "C": 1.0,
+      "class_weight": null
+    },
+    "cv_score": 1.0,
+    "val_accuracy": 1.0,
+    "val_macro_f1": 1.0,
+    "val_weighted_f1": 1.0,
+    "train_time": 1.4682271480560303
+  },
+  "MultinomialNB_baseline__tfidf_word": {
+    "model": "MultinomialNB_baseline",
+    "feature_set": "tfidf_word",
+    "best_params": {
+      "alpha": 1.0
+    },
+    "cv_score": 1.0,
+    "val_accuracy": 1.0,
+    "val_macro_f1": 1.0,
+    "val_weighted_f1": 1.0,
+    "train_time": 0.0
+  }
+}

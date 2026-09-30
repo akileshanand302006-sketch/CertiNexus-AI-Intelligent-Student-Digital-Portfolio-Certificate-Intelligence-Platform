@@ -1,0 +1,30 @@
+{
+  "model_id": "certificate_classifier_v1",
+  "model_name": "CertificateClassifier",
+  "version": "1.0",
+  "dataset_version": "synthetic_v1",
+  "feature_version": "tfidf_word",
+  "training_date": "2026-09-16T05:54:16.313204",
+  "algorithm": "LogisticRegression",
+  "metrics": {
+    "accuracy": 1.0,
+    "macro_precision": 1.0,
+    "macro_recall": 1.0,
+    "macro_f1": 1.0,
+    "weighted_f1": 1.0
+  },
+  "classes": [
+    "Academic Achievement",
+    "Certification",
+    "Conference",
+    "Cultural Activity",
+    "Hackathon",
+    "Internship",
+    "Seminar",
+    "Sports",
+    "Technical Competition",
+    "Volunteer Activity",
+    "Workshop"
+  ],
+  "status": "production"
+}
