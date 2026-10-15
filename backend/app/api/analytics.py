@@ -28,8 +28,10 @@ async def get_analytics(
     # Category distribution
     cat_dist = Counter(c.category for c in certs if c.category)
 
-    # Skills distribution
-    skill_dist = Counter(s.skill_name for s in skills)
+    # Skills distribution by real occurrence counts
+    skill_dist = Counter()
+    for s in skills:
+        skill_dist[s.skill_name] = int(getattr(s, "occurrence_count", 1) or 1)
 
     # Monthly activity
     monthly = Counter()
@@ -49,7 +51,7 @@ async def get_analytics(
         total_skills=len(skills),
         total_categories=len(cat_dist),
         category_distribution=dict(cat_dist),
-        skills_distribution=dict(skill_dist.most_common(20)),
+        skills_distribution=dict(skill_dist.most_common()),
         recent_certificates=[CertificateResponse.model_validate(c) for c in recent],
         monthly_activity=dict(sorted(monthly.items())),
         portfolio_completeness=completeness,

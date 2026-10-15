@@ -1,0 +1,176 @@
+{
+  "timestamp": "2026-10-06T07:54:07.686031",
+  "num_experiments": 9,
+  "best_configuration": "MultinomialNB__tfidf_word",
+  "classes": [
+    "Academic Achievement",
+    "Certification",
+    "Conference",
+    "Cultural Activity",
+    "Hackathon",
+    "Internship",
+    "Seminar",
+    "Sports",
+    "Technical Competition",
+    "Volunteer Activity",
+    "Workshop"
+  ],
+  "results": [
+    {
+      "experiment_name": "MultinomialNB__tfidf_word",
+      "model": "MultinomialNB",
+      "feature_set": "tfidf_word",
+      "parameters": {
+        "alpha": 1.0
+      },
+      "cv_macro_f1_mean": 0.993,
+      "cv_macro_f1_std": 0.0093,
+      "cv_accuracy_mean": 0.9929,
+      "test_accuracy": 1.0,
+      "test_macro_f1": 1.0,
+      "test_macro_precision": 1.0,
+      "test_macro_recall": 1.0,
+      "training_time_sec": 0.031,
+      "latency_per_sample_ms": 0.0
+    },
+    {
+      "experiment_name": "MultinomialNB__tfidf_word_char",
+      "model": "MultinomialNB",
+      "feature_set": "tfidf_word_char",
+      "parameters": {
+        "alpha": 0.5
+      },
+      "cv_macro_f1_mean": 0.9951,
+      "cv_macro_f1_std": 0.0098,
+      "cv_accuracy_mean": 0.9953,
+      "test_accuracy": 1.0,
+      "test_macro_f1": 1.0,
+      "test_macro_precision": 1.0,
+      "test_macro_recall": 1.0,
+      "training_time_sec": 0.201,
+      "latency_per_sample_ms": 0.01
+    },
+    {
+      "experiment_name": "MultinomialNB__tfidf_enriched",
+      "model": "MultinomialNB",
+      "feature_set": "tfidf_enriched",
+      "parameters": {
+        "alpha": 0.1
+      },
+      "cv_macro_f1_mean": 0.9954,
+      "cv_macro_f1_std": 0.0092,
+      "cv_accuracy_mean": 0.9953,
+      "test_accuracy": 1.0,
+      "test_macro_f1": 1.0,
+      "test_macro_precision": 1.0,
+      "test_macro_recall": 1.0,
+      "training_time_sec": 0.334,
+      "latency_per_sample_ms": 0.01
+    },
+    {
+      "experiment_name": "LogisticRegression__tfidf_word",
+      "model": "LogisticRegression",
+      "feature_set": "tfidf_word",
+      "parameters": {
+        "C": 1.0,
+        "max_iter": 1000
+      },
+      "cv_macro_f1_mean": 0.9954,
+      "cv_macro_f1_std": 0.0092,
+      "cv_accuracy_mean": 0.9953,
+      "test_accuracy": 1.0,
+      "test_macro_f1": 1.0,
+      "test_macro_precision": 1.0,
+      "test_macro_recall": 1.0,
+      "training_time_sec": 0.109,
+      "latency_per_sample_ms": 0.0
+    },
+    {
+      "experiment_name": "LogisticRegression__tfidf_word_char",
+      "model": "LogisticRegression",
+      "feature_set": "tfidf_word_char",
+      "parameters": {
+        "C": 2.0,
+        "max_iter": 1000
+      },
+      "cv_macro_f1_mean": 1.0,
+      "cv_macro_f1_std": 0.0,
+      "cv_accuracy_mean": 1.0,
+      "test_accuracy": 1.0,
+      "test_macro_f1": 1.0,
+      "test_macro_precision": 1.0,
+      "test_macro_recall": 1.0,
+      "training_time_sec": 0.352,
+      "latency_per_sample_ms": 0.0
+    },
+    {
+      "experiment_name": "LogisticRegression__tfidf_enriched",
+      "model": "LogisticRegression",
+      "feature_set": "tfidf_enriched",
+      "parameters": {
+        "C": 5.0,
+        "max_iter": 1000
+      },
+      "cv_macro_f1_mean": 0.9977,
+      "cv_macro_f1_std": 0.0046,
+      "cv_accuracy_mean": 0.9976,
+      "test_accuracy": 1.0,
+      "test_macro_f1": 1.0,
+      "test_macro_precision": 1.0,
+      "test_macro_recall": 1.0,
+      "training_time_sec": 0.795,
+      "latency_per_sample_ms": 0.01
+    },
+    {
+      "experiment_name": "LinearSVC__tfidf_word",
+      "model": "LinearSVC",
+      "feature_set": "tfidf_word",
+      "parameters": {
+        "C": 1.0
+      },
+      "cv_macro_f1_mean": 0.9954,
+      "cv_macro_f1_std": 0.0092,
+      "cv_accuracy_mean": 0.9953,
+      "test_accuracy": 1.0,
+      "test_macro_f1": 1.0,
+      "test_macro_precision": 1.0,
+      "test_macro_recall": 1.0,
+      "training_time_sec": 0.123,
+      "latency_per_sample_ms": 0.04
+    },
+    {
+      "experiment_name": "LinearSVC__tfidf_word_char",
+      "model": "LinearSVC",
+      "feature_set": "tfidf_word_char",
+      "parameters": {
+        "C": 1.0
+      },
+      "cv_macro_f1_mean": 1.0,
+      "cv_macro_f1_std": 0.0,
+      "cv_accuracy_mean": 1.0,
+      "test_accuracy": 1.0,
+      "test_macro_f1": 1.0,
+      "test_macro_precision": 1.0,
+      "test_macro_recall": 1.0,
+      "training_time_sec": 0.412,
+      "latency_per_sample_ms": 0.03
+    },
+    {
+      "experiment_name": "LinearSVC__tfidf_enriched",
+      "model": "LinearSVC",
+      "feature_set": "tfidf_enriched",
+      "parameters": {
+        "C": 0.5
+      },
+      "cv_macro_f1_mean": 0.9977,
+      "cv_macro_f1_std": 0.0046,
+      "cv_accuracy_mean": 0.9976,
+      "test_accuracy": 1.0,
+      "test_macro_f1": 1.0,
+      "test_macro_precision": 1.0,
+      "test_macro_recall": 1.0,
+      "training_time_sec": 0.612,
+      "latency_per_sample_ms": 0.04
+    }
+  ]
+}

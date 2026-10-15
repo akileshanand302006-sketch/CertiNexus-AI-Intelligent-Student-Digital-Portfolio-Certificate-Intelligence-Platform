@@ -1,0 +1,3 @@
+"""
+CertiNexus AI — Core Module
+"""

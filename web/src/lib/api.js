@@ -2,7 +2,7 @@
  * CertiNexus AI — API Client
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+const API_BASE = import.meta.env.VITE_API_URL || '/api'
 
 class ApiClient {
   constructor() {
@@ -41,7 +41,7 @@ class ApiClient {
 
     const response = await fetch(url, { ...options, headers })
 
-    if (response.status === 401) {
+    if (response.status === 401 && !path.startsWith('/auth/')) {
       this.clearTokens()
       window.location.href = '/login'
       throw new Error('Unauthorized')
@@ -100,6 +100,21 @@ class ApiClient {
   confirmCertificate(id) {
     return this.request(`/certificates/${id}/confirm`, { method: 'POST' })
   }
+  reprocessCertificate(id) {
+    return this.request(`/certificates/${id}/reprocess`, { method: 'POST' })
+  }
+  getCertificateExtraction(id) {
+    return this.request(`/certificates/${id}/extraction`)
+  }
+  getCertificateExplanation(id) {
+    return this.request(`/certificates/${id}/explanation`)
+  }
+  getCertificateOcr(id) {
+    return this.request(`/certificates/${id}/ocr`)
+  }
+  correctCertificateField(id, data) {
+    return this.request(`/certificates/${id}/correct`, { method: 'POST', body: JSON.stringify(data) })
+  }
   getCertificateFileUrl(id) {
     const token = this.getToken()
     return `${this.baseUrl}/certificates/${id}/file${token ? `?token=${encodeURIComponent(token)}` : ''}`
@@ -128,15 +143,32 @@ class ApiClient {
   generateResume(data) {
     return this.request('/resume/generate', { method: 'POST', body: JSON.stringify(data) })
   }
+  saveResumeToPortfolio(data) {
+    return this.request('/resume/save-to-portfolio', { method: 'POST', body: JSON.stringify(data) })
+  }
+
+  // AI Chatbot
+  sendChatMessage(message, history = []) {
+    return this.request('/chat/message', {
+      method: 'POST',
+      body: JSON.stringify({ message, history }),
+    })
+  }
+
+  getChatSuggestions() {
+    return this.request('/chat/suggestions')
+  }
 
   // Admin / ML Research
   getDatasetStats() { return this.request('/admin/dataset-statistics') }
   getModelPerformance() { return this.request('/admin/model-performance') }
+  getModels() { return this.request('/admin/models') }
   getExperiments() { return this.request('/admin/experiments') }
   getModelComparison() { return this.request('/admin/model-comparison') }
   getConfusionMatrix() { return this.request('/admin/confusion-matrix') }
   getErrorAnalysis() { return this.request('/admin/error-analysis') }
 }
+
 
 export const api = new ApiClient()
 export default api

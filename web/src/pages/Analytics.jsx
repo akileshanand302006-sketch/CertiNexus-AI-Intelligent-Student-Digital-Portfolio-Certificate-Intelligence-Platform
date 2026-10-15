@@ -1,166 +1,247 @@
 /**
- * CertiNexus AI — Analytics & Academic Portfolio Evaluation
+ * CertiNexus AI — Spatial Portfolio Analytics & Evaluation Matrix
+ * Liquid Glass Charts, Recharts Integration, and Academic Readiness Index
  */
+
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, ResponsiveContainer,
   Tooltip, CartesianGrid
 } from 'recharts'
-import { Award, Compass, TrendingUp, CheckCircle2, ShieldCheck, Printer } from 'lucide-react'
+import { Award, Compass, TrendingUp, ShieldCheck, Printer, Brain, Sparkles } from 'lucide-react'
 import api from '../lib/api.js'
 
-const COLORS = ['#6366f1', '#a855f7', '#22d3ee', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#14b8a6', '#f97316', '#06b6d4']
-
-const chartTooltipStyle = {
-  background: 'rgba(30,32,48,0.95)', border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: '8px', color: '#f1f5f9', fontSize: '0.8rem',
-}
+const CHART_PALETTE = [
+  '#38bdf8', '#06b6d4', '#6366f1', '#818cf8',
+  '#10b981', '#f59e0b', '#ec4899', '#a855f7',
+]
 
 export default function Analytics() {
-  const { data: analytics, isLoading } = useQuery({ queryKey: ['analytics'], queryFn: () => api.getAnalytics() })
+  const { data: analytics, isLoading } = useQuery({
+    queryKey: ['analytics'],
+    queryFn: () => api.getAnalytics(),
+    placeholderData: (prev) => prev,
+  })
+
+  if (isLoading) {
+    return (
+      <div className="single-screen-tab-wrapper" style={{ maxWidth: 1240, width: '100%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: 36, height: 36, borderRadius: '50%', border: '2px solid var(--brand-ice)', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
+      </div>
+    )
+  }
 
   const catData = Object.entries(analytics?.category_distribution || {}).map(([name, value]) => ({ name, value }))
-  const skillData = Object.entries(analytics?.skills_distribution || {}).slice(0, 12).map(([name, value]) => ({ name, value }))
-  const monthlyData = Object.entries(analytics?.monthly_activity || {}).map(([name, value]) => ({ name, value }))
-
-  // Calculate student evaluation metrics
+  const skillData = Object.entries(analytics?.skills_distribution || {}).slice(0, 10).map(([name, value]) => ({ name, value }))
   const totalCerts = analytics?.total_certificates || 0
   const totalSkills = analytics?.total_skills || 0
-  const readinessScore = Math.min(100, Math.round((totalCerts * 25) + (totalSkills * 12)))
+  const readinessScore = analytics?.portfolio_completeness != null
+    ? Math.round(analytics.portfolio_completeness)
+    : Math.min(100, Math.round((totalCerts * 15) + Math.min(40, totalSkills * 2)))
 
   return (
-    <div>
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+    <div className="single-screen-tab-wrapper" style={{ maxWidth: 1240, width: '100%', margin: '0 auto', height: '100%', maxHeight: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      {/* Compact Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '10px', flexShrink: 0 }}>
         <div>
-          <h1>Portfolio Analytics & Evaluation</h1>
-          <p>Comprehensive academic verification and competency assessment</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
+            <span className="status-beacon green" />
+            <span style={{ fontSize: '0.74rem', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--brand-ice)' }}>
+              Competency Evaluation Matrix
+            </span>
+          </div>
+          <h1 className="spatial-hero-title" style={{ fontSize: '1.45rem', margin: 0 }}>
+            Portfolio Analytics
+          </h1>
         </div>
-        <button className="btn btn-secondary btn-sm" onClick={() => window.print()}>
-          <Printer size={15} /> Print Evaluation Report
+
+        <button onClick={() => window.print()} className="btn-liquid btn-liquid-ghost" style={{ padding: '6px 14px', fontSize: '0.8rem' }}>
+          <Printer size={14} />
+          <span>Export Report</span>
         </button>
       </div>
 
-      {/* Stats */}
-      <div className="grid-stats" style={{ marginBottom: '24px' }}>
-        {[
-          { label: 'Total Verified Certificates', value: totalCerts },
-          { label: 'Demonstrated Skills', value: totalSkills },
-          { label: 'Achievement Categories', value: analytics?.total_categories || 0 },
-          { label: 'Career Readiness Index', value: `${readinessScore}%` },
-        ].map((stat, i) => (
-          <motion.div key={i} className="stat-card" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
-            <div className="stat-value">{stat.value}</div>
-            <div className="stat-label">{stat.label}</div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Academic Evaluation Summary Card */}
-      <motion.div
-        className="glass-card"
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        style={{ padding: '24px', marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-          <ShieldCheck size={20} style={{ color: 'var(--color-success)' }} />
-          <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.15rem', margin: 0 }}>
-            Student Evaluation & Readiness Assessment
-          </h2>
+      {/* Floating Metric Counters Strip */}
+      <div className="stats-spatial-grid" style={{ marginBottom: '8px', gap: '8px', flexShrink: 0 }}>
+        <div className="metric-spatial-card glass-specular-glow" style={{ padding: '8px 14px' }}>
+          <div className="metric-header" style={{ marginBottom: '2px' }}>
+            <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>Credentials</span>
+            <Award size={15} style={{ color: 'var(--brand-ice)' }} />
+          </div>
+          <div className="metric-value-num" style={{ fontSize: '1.35rem', margin: 0 }}>{totalCerts}</div>
+          <div className="metric-label-txt" style={{ fontSize: '0.7rem' }}>Accredited Certificates</div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-          <div style={{
-            padding: '16px', borderRadius: 'var(--radius-md)',
-            background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-primary-light)', marginBottom: '8px' }}>
-              <Award size={16} /> Domain Competency Profile
+        <div className="metric-spatial-card glass-specular-glow" style={{ padding: '8px 14px' }}>
+          <div className="metric-header" style={{ marginBottom: '2px' }}>
+            <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>Demonstrated Skills</span>
+            <Sparkles size={15} style={{ color: 'var(--brand-primary-light)' }} />
+          </div>
+          <div className="metric-value-num" style={{ fontSize: '1.35rem', margin: 0 }}>{totalSkills}</div>
+          <div className="metric-label-txt" style={{ fontSize: '0.7rem' }}>Extracted Competencies</div>
+        </div>
+
+        <div className="metric-spatial-card glass-specular-glow" style={{ padding: '8px 14px' }}>
+          <div className="metric-header" style={{ marginBottom: '2px' }}>
+            <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>Domains</span>
+            <Compass size={15} style={{ color: 'var(--brand-cyan)' }} />
+          </div>
+          <div className="metric-value-num" style={{ fontSize: '1.35rem', margin: 0 }}>{analytics?.total_categories || 0}</div>
+          <div className="metric-label-txt" style={{ fontSize: '0.7rem' }}>Achievement Verticals</div>
+        </div>
+
+        <div className="metric-spatial-card glass-specular-glow" style={{ padding: '8px 14px' }}>
+          <div className="metric-header" style={{ marginBottom: '2px' }}>
+            <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>Readiness Index</span>
+            <TrendingUp size={15} style={{ color: 'var(--brand-emerald)' }} />
+          </div>
+          <div className="metric-value-num" style={{ fontSize: '1.35rem', margin: 0, color: 'var(--brand-emerald)' }}>{readinessScore}%</div>
+          <div className="metric-label-txt" style={{ fontSize: '0.7rem' }}>AI Career Benchmark</div>
+        </div>
+      </div>
+
+      {/* Main Single-Screen Content Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1.35fr 1fr', gap: '10px', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+        {/* Left Column: Visual Charts Split */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0, height: '100%', overflow: 'hidden' }}>
+          {/* Category Breakdown & Distribution Card */}
+          <div className="glass-panel" style={{ padding: '12px 16px', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexShrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                  Category Distribution
+                </h2>
+                <span className="glass-pill" style={{ fontSize: '0.68rem', padding: '2px 8px' }}>
+                  {catData.length} Active Domains
+                </span>
+              </div>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)' }}>
+                {totalCerts} Total Documents
+              </span>
             </div>
-            <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+            {catData.length > 0 ? (
+              <div style={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '120px 1fr', gap: '12px', alignItems: 'center' }}>
+                {/* Donut Chart with Centered Total */}
+                <div style={{ width: 120, height: 120, position: 'relative', margin: '0 auto', flexShrink: 0 }}>
+                  <ResponsiveContainer width={120} height={120}>
+                    <PieChart>
+                      <Pie data={catData} cx="50%" cy="50%" innerRadius={36} outerRadius={54} paddingAngle={4} dataKey="value" stroke="transparent" isAnimationActive={false}>
+                        {catData.map((_, idx) => (
+                          <Cell key={idx} fill={CHART_PALETTE[idx % CHART_PALETTE.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip contentStyle={{ background: 'var(--glass-elevated)', borderColor: 'var(--glass-border-light)', borderRadius: 8, backdropFilter: 'blur(16px)', fontSize: '0.75rem' }} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', pointerEvents: 'none' }}>
+                    <div style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{totalCerts}</div>
+                    <div style={{ fontSize: '0.62rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginTop: '2px' }}>Docs</div>
+                  </div>
+                </div>
+
+                {/* Right Breakdown List with Progress Bars */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', overflowY: 'auto', maxHeight: '100%', paddingRight: '4px' }}>
+                  {catData.map((item, idx) => {
+                    const color = CHART_PALETTE[idx % CHART_PALETTE.length]
+                    const pct = totalCerts > 0 ? Math.round((item.value / totalCerts) * 100) : 0
+                    return (
+                      <div key={item.name} style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.76rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+                            <span style={{ width: 7, height: 7, borderRadius: '50%', background: color, flexShrink: 0 }} />
+                            <span style={{ color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {item.name}
+                            </span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, marginLeft: '6px' }}>
+                            <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>{item.value}</span>
+                            <span style={{ color: color, fontWeight: 600, fontSize: '0.72rem', minWidth: '32px', textAlign: 'right' }}>{pct}%</span>
+                          </div>
+                        </div>
+                        <div style={{ width: '100%', height: '4px', background: 'var(--glass-pill)', borderRadius: '2px', overflow: 'hidden' }}>
+                          <div style={{ width: `${pct}%`, height: '100%', background: color, borderRadius: '2px' }} />
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '20px 0', color: 'var(--text-muted)', fontSize: '0.8rem' }}>No certificate categories recorded yet</div>
+            )}
+          </div>
+
+          {/* Skill Density Bar Chart */}
+          <div className="glass-panel" style={{ padding: '12px 16px', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px', flexShrink: 0 }}>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                Top Skill Frequency
+              </h2>
+              <span className="glass-pill" style={{ fontSize: '0.68rem', padding: '2px 8px' }}>Frequency</span>
+            </div>
+            {skillData.length > 0 ? (
+              <div style={{ flex: 1, minHeight: 120, width: '100%' }}>
+                <ResponsiveContainer width="100%" height={125}>
+                  <BarChart data={skillData} layout="vertical" margin={{ left: 10, right: 10, top: 2, bottom: 2 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--glass-border)" />
+                    <XAxis type="number" stroke="var(--text-muted)" fontSize={10} allowDecimals={false} domain={[0, 'dataMax + 1']} />
+                    <YAxis type="category" dataKey="name" stroke="var(--text-muted)" fontSize={10} width={75} />
+                    <Tooltip
+                      contentStyle={{ background: 'var(--glass-elevated)', borderColor: 'var(--glass-border-light)', borderRadius: 10, backdropFilter: 'blur(16px)', fontSize: '0.8rem' }}
+                      formatter={(val) => [`${val} occurrence${val === 1 ? '' : 's'}`, 'Frequency']}
+                    />
+                    <Bar dataKey="value" fill="#38bdf8" radius={[0, 4, 4, 0]} isAnimationActive={false} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '20px 0', color: 'var(--text-muted)', fontSize: '0.8rem' }}>No skill data recorded yet</div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Column: Student Evaluation & Readiness Assessment */}
+        <div className="glass-panel" style={{ padding: '14px 18px', height: '100%', minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexShrink: 0 }}>
+            <ShieldCheck size={18} style={{ color: 'var(--brand-emerald)' }} />
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+              Readiness Assessment
+            </h2>
+          </div>
+
+          <div className="glass-card-spatial" style={{ padding: '12px 14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--brand-ice)', fontSize: '0.82rem', fontWeight: 600, marginBottom: '4px' }}>
+              <Award size={14} /> Domain Competency Profile
+            </div>
+            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.45, margin: 0 }}>
               {catData.length > 0
-                ? `Primary experience is concentrated in ${catData.map(c => c.name).join(', ')}. Demonstrated practical industry engagement through verified completion credentials.`
+                ? `Primary experience is concentrated in ${catData.map((c) => c.name).join(', ')}. Demonstrated practical industry engagement through verified completion credentials.`
                 : 'Upload certificates to generate your automated academic competency profile.'}
             </p>
           </div>
 
-          <div style={{
-            padding: '16px', borderRadius: 'var(--radius-md)',
-            background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-success)', marginBottom: '8px' }}>
-              <TrendingUp size={16} /> Learning Velocity & Growth
+          <div className="glass-card-spatial" style={{ padding: '12px 14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--brand-emerald)', fontSize: '0.82rem', fontWeight: 600, marginBottom: '4px' }}>
+              <TrendingUp size={14} /> Learning Velocity & Growth
             </div>
-            <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.45, margin: 0 }}>
               {totalSkills > 0
                 ? `Acquired ${totalSkills} distinct technical and professional skills across verified achievement records. Demonstrates strong initiative in real-world application.`
-                : 'Skills will automatically appear here as certificates are parsed by the AI extractor.'}
+                : 'Skills will automatically appear here once certificates are uploaded and processed by the OCR pipeline.'}
             </p>
           </div>
 
-          <div style={{
-            padding: '16px', borderRadius: 'var(--radius-md)',
-            background: 'rgba(168,85,247,0.08)', border: '1px solid rgba(168,85,247,0.2)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-secondary-light)', marginBottom: '8px' }}>
-              <Compass size={16} /> Recommended Next Milestones
+          <div className="glass-card-spatial" style={{ padding: '12px 14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--brand-primary-light)', fontSize: '0.82rem', fontWeight: 600, marginBottom: '4px' }}>
+              <Brain size={14} /> Career & Role Recommendation
             </div>
-            <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-              Expand portfolio breadth by participating in a Hackathon or technical workshop to balance internship industry experience with competitive problem-solving.
+            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.45, margin: 0 }}>
+              Based on your verified skills in programming, databases, web technologies, and software systems, your profile strongly matches Software Developer & AI roles. Consult the AI Assistant tab for detailed role milestones.
             </p>
           </div>
         </div>
-      </motion.div>
-
-      {/* Charts */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
-        <motion.div className="glass-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-          <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, marginBottom: '16px', fontSize: '0.95rem' }}>Category Distribution</h3>
-          {catData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={260}>
-              <PieChart>
-                <Pie data={catData} cx="50%" cy="50%" innerRadius={55} outerRadius={95} paddingAngle={3} dataKey="value" strokeWidth={0}>
-                  {catData.map((_, idx) => <Cell key={idx} fill={COLORS[idx % COLORS.length]} />)}
-                </Pie>
-                <Tooltip contentStyle={chartTooltipStyle} />
-              </PieChart>
-            </ResponsiveContainer>
-          ) : <div style={{ height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>No data</div>}
-        </motion.div>
-
-        <motion.div className="glass-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-          <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, marginBottom: '16px', fontSize: '0.95rem' }}>Skills Distribution</h3>
-          {skillData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={skillData} layout="vertical" margin={{ left: 80 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis type="number" tick={{ fill: '#94a3b8', fontSize: 11 }} />
-                <YAxis type="category" dataKey="name" tick={{ fill: '#94a3b8', fontSize: 11 }} width={80} />
-                <Tooltip contentStyle={chartTooltipStyle} />
-                <Bar dataKey="value" fill="#a855f7" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : <div style={{ height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>No data</div>}
-        </motion.div>
       </div>
-
-      {/* Monthly Activity */}
-      {monthlyData.length > 0 && (
-        <motion.div className="glass-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-          <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, marginBottom: '16px', fontSize: '0.95rem' }}>Monthly Activity</h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={monthlyData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 11 }} />
-              <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
-              <Tooltip contentStyle={chartTooltipStyle} />
-              <Bar dataKey="value" fill="#6366f1" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </motion.div>
-      )}
     </div>
   )
 }
-

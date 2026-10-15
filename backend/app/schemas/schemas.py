@@ -17,9 +17,12 @@ class UserRegister(BaseModel):
     username: str = Field(..., min_length=3, max_length=100)
     password: str = Field(..., min_length=6, max_length=128)
     full_name: Optional[str] = None
+    institution: Optional[str] = None
 
 class UserLogin(BaseModel):
-    email: str
+    email: Optional[str] = None
+    username_or_email: Optional[str] = None
+    username: Optional[str] = None
     password: str
 
 class TokenResponse(BaseModel):
@@ -77,6 +80,7 @@ class CertificateResponse(BaseModel):
     issue_date: Optional[str] = None
     duration: Optional[str] = None
     certificate_id_extracted: Optional[str] = None
+    document_type: Optional[str] = "certificate"
     category: Optional[str] = None
     ai_category: Optional[str] = None
     ai_confidence: Optional[float] = None
@@ -94,6 +98,13 @@ class CertificateResponse(BaseModel):
     is_public: bool = False
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+
+    # Advanced Intelligence
+    ocr_regions: Optional[List[Dict[str, Any]]] = None
+    extraction_data: Optional[Dict[str, Any]] = None
+    explanation_data: Optional[Dict[str, Any]] = None
+    duplicate_hash: Optional[str] = None
+    quality_score: Optional[Dict[str, Any]] = None
 
     class Config:
         from_attributes = True
@@ -117,6 +128,43 @@ class ProcessingStatus(BaseModel):
     status: str
     progress: Optional[int] = None
     message: Optional[str] = None
+
+
+class ExtractionResponse(BaseModel):
+    certificate_id: str
+    category: Optional[str] = None
+    completeness_score: float = 0.0
+    entities: List[Dict[str, Any]] = []
+    structured_fields: Dict[str, Any] = {}
+    skills: List[str] = []
+
+
+class ExplanationResponse(BaseModel):
+    certificate_id: str
+    category: str
+    confidence: float
+    confidence_level: str
+    positive_terms: List[Dict[str, Any]] = []
+    negative_terms: List[Dict[str, Any]] = []
+    alternatives: List[Dict[str, Any]] = []
+    explanation_text: str = ""
+    model_version: str = ""
+
+
+class OCRDetailsResponse(BaseModel):
+    certificate_id: str
+    ocr_engine: str = "easyocr"
+    raw_text: str = ""
+    clean_text: str = ""
+    regions: List[Dict[str, Any]] = []
+    quality_score: Optional[Dict[str, Any]] = None
+    num_regions: int = 0
+
+
+class CorrectionRequest(BaseModel):
+    field_name: str
+    corrected_value: str
+
 
 
 # ============================================================

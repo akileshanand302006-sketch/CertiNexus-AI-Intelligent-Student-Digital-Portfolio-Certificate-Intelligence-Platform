@@ -326,29 +326,32 @@ def train_candidates(X_train, X_val, y_train, y_val, le, logger):
     feature_configs = create_feature_configs()
     results = {}
 
-    # ---- Model definitions with hyperparameter grids ----
+    # ---- Model definitions with expanded hyperparameter grids (Phase 10) ----
     model_configs = {
         "LogisticRegression": {
             "model": LogisticRegression(max_iter=1000, random_state=RANDOM_SEED),
             "param_grid": {
-                "C": [0.1, 1.0, 10.0],
+                "C": [0.01, 0.1, 0.5, 1.0, 5.0, 10.0],
+                "solver": ["lbfgs"],
                 "class_weight": [None, "balanced"],
             },
         },
         "LinearSVM": {
             "model": LinearSVC(max_iter=2000, random_state=RANDOM_SEED),
             "param_grid": {
-                "C": [0.1, 1.0, 10.0],
+                "C": [0.01, 0.1, 0.5, 1.0, 2.0, 10.0],
                 "class_weight": [None, "balanced"],
             },
         },
         "MultinomialNB_tuned": {
             "model": MultinomialNB(),
             "param_grid": {
-                "alpha": [0.01, 0.1, 0.5, 1.0, 2.0],
+                "alpha": [0.001, 0.01, 0.1, 0.5, 1.0, 2.0, 5.0],
+                "fit_prior": [True, False],
             },
         },
     }
+
 
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_SEED)
 

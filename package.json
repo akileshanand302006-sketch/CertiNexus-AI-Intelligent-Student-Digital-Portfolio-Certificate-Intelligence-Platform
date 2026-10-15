@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "npm --prefix web run dev",
+    "build": "npm --prefix web run build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "npm --prefix web run preview"
   },
   "dependencies": {
     "react": "^19.2.8",

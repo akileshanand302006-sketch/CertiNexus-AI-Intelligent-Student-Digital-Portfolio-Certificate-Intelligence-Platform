@@ -1,5 +1,5 @@
 /**
- * CertiNexus AI — Login Page (Liquid Glass)
+ * CertiNexus AI — Spatial Liquid Glass Login
  */
 
 import { useState } from 'react'
@@ -7,6 +7,8 @@ import { motion } from 'framer-motion'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth.jsx'
 import { Eye, EyeOff, LogIn, AlertCircle } from 'lucide-react'
+import toast from 'react-hot-toast'
+import StudentExperience from '../components/scene/StudentExperience.jsx'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -25,147 +27,154 @@ export default function Login() {
       await login(email, password)
       navigate('/dashboard')
     } catch (err) {
-      setError(err.message || 'Login failed')
+      const msg = err.message || 'Login failed'
+      setError(msg)
+      toast.error(msg)
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex', position: 'relative', overflow: 'hidden',
-    }}>
-      {/* Aurora Background */}
-      <div className="aurora-bg">
-        <div className="aurora-blob aurora-blob-1" />
-        <div className="aurora-blob aurora-blob-2" />
-        <div className="aurora-blob aurora-blob-3" />
-      </div>
+    <div style={{ minHeight: '100vh', display: 'flex', position: 'relative', overflow: 'hidden' }}>
+      <div className="atmospheric-ambient" />
+      <div className="spatial-grid-overlay" />
+
+      {/* 3D Student Workstation Background */}
+      <StudentExperience scene={5} showCertificate={false} />
 
       {/* Left Panel — Branding */}
       <div style={{
         flex: 1, display: 'flex', flexDirection: 'column',
-        justifyContent: 'center', padding: '48px',
+        justifyContent: 'center', padding: '48px 64px',
         position: 'relative', zIndex: 1,
       }}>
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7 }}>
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '40px',
-          }}>
-            <div style={{
-              width: 44, height: 44, borderRadius: '12px',
-              background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontWeight: 800, color: 'white', fontFamily: 'var(--font-display)', fontSize: '1.2rem',
-            }}>C</div>
-            <span style={{
-              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.3rem',
-            }}>CertiNexus AI</span>
+          transition={{ duration: 0.6 }}
+        >
+          <div
+            style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '40px', cursor: 'pointer' }}
+            onClick={() => navigate('/')}
+          >
+            <div className="nav-brand-logo" style={{ width: 40, height: 40, fontSize: '1.2rem' }}>C</div>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.35rem', color: 'var(--text-primary)' }}>
+              CertiNexus AI
+            </span>
+            <span className="status-beacon" />
           </div>
 
           <h1 style={{
-            fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)',
+            fontFamily: 'var(--font-display)', fontSize: 'clamp(2.2rem, 4vw, 3.2rem)',
             fontWeight: 800, lineHeight: 1.15, marginBottom: '16px',
-            background: 'linear-gradient(135deg, #f1f5f9, #6366f1)',
+            background: 'linear-gradient(135deg, var(--text-primary) 30%, var(--brand-ice) 100%)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
           }}>
             Your achievements.<br />Intelligently organized.
           </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', lineHeight: 1.7, maxWidth: '400px' }}>
-            Upload certificates, let AI classify and extract skills,
-            and build your digital portfolio automatically.
-          </p>
         </motion.div>
       </div>
 
-      {/* Right Panel — Login Form */}
+      {/* Right Panel — Spatial Glass Login Form */}
       <div style={{
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '48px', position: 'relative', zIndex: 1,
+        padding: '32px', position: 'relative', zIndex: 1,
       }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          className="glass-card"
-          style={{
-            width: '100%', maxWidth: '420px', padding: '40px',
-            background: 'rgba(255,255,255,0.04)',
-          }}>
-          <h2 style={{
-            fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700,
-            marginBottom: '8px',
-          }}>Welcome back</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '32px' }}>
-            Sign in to your CertiNexus AI account
+          transition={{ duration: 0.5 }}
+          className="glass-panel"
+          style={{ width: '100%', maxWidth: '440px', padding: '40px 36px', borderRadius: '32px' }}
+        >
+          <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.65rem', marginBottom: '8px', color: 'var(--text-primary)' }}>
+            Welcome Back
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '28px' }}>
+            Sign in to access your intelligent credential vault.
           </p>
 
           {error && (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '8px',
-              padding: '12px 16px', borderRadius: 'var(--radius-md)',
-              background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)',
-              color: 'var(--color-error-light)', fontSize: '0.85rem',
-              marginBottom: '20px',
-            }}>
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 16px',
+                borderRadius: '12px', background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.25)',
+                color: 'var(--brand-rose)', fontSize: '0.85rem', marginBottom: '20px',
+              }}
+            >
               <AlertCircle size={16} />
-              {error}
-            </div>
+              <span>{error}</span>
+            </motion.div>
           )}
 
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{
-                display: 'block', fontSize: '0.85rem', fontWeight: 500,
-                color: 'var(--text-secondary)', marginBottom: '8px',
-              }}>Email</label>
-              <input className="glass-input" type="email" required
-                placeholder="you@example.com"
-                value={email} onChange={e => setEmail(e.target.value)} />
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                Email or Username
+              </label>
+              <input
+                type="text"
+                required
+                className="glass-input-spatial"
+                placeholder="you@domain.edu or username"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
 
-            <div style={{ marginBottom: '28px' }}>
-              <label style={{
-                display: 'block', fontSize: '0.85rem', fontWeight: 500,
-                color: 'var(--text-secondary)', marginBottom: '8px',
-              }}>Password</label>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                Password
+              </label>
               <div style={{ position: 'relative' }}>
-                <input className="glass-input" required
+                <input
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
-                  value={password} onChange={e => setPassword(e.target.value)}
-                  style={{ paddingRight: '44px' }} />
-                <button type="button"
+                  required
+                  className="glass-input-spatial"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={{ paddingRight: '44px' }}
+                />
+                <button
+                  type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   style={{
-                    position: 'absolute', right: '12px', top: '50%',
-                    transform: 'translateY(-50%)', background: 'none',
-                    border: 'none', color: 'var(--text-muted)', cursor: 'pointer',
-                  }}>
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer',
+                  }}
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary"
+            <button
+              type="submit"
               disabled={loading}
-              style={{ width: '100%', padding: '14px', fontSize: '0.95rem' }}>
-              {loading ? 'Signing in...' : <>Sign In <LogIn size={18} /></>}
+              className="btn-liquid btn-liquid-primary"
+              style={{ width: '100%', marginTop: '10px', padding: '14px' }}
+            >
+              {loading ? (
+                <div style={{ width: 18, height: 18, borderRadius: '50%', border: '2px solid #ffffff', borderTopColor: 'transparent', animation: 'spin 1s linear infinite' }} />
+              ) : (
+                <>
+                  <LogIn size={16} />
+                  <span>Sign In</span>
+                </>
+              )}
             </button>
           </form>
 
-          <p style={{
-            textAlign: 'center', marginTop: '24px',
-            color: 'var(--text-secondary)', fontSize: '0.85rem',
-          }}>
+          <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
             Don't have an account?{' '}
-            <Link to="/register" style={{ color: 'var(--color-primary-light)', fontWeight: 600 }}>
-              Create one
+            <Link to="/register" style={{ color: 'var(--brand-ice)', fontWeight: 600 }}>
+              Create Account
             </Link>
-          </p>
+          </div>
         </motion.div>
       </div>
     </div>

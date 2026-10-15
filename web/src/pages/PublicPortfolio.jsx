@@ -1,121 +1,212 @@
 /**
- * CertiNexus AI — Public Portfolio Page
+ * CertiNexus AI — Verified Public Portfolio Showcase
+ * External View with Atmospheric Liquid Glass & Cryptographic Attestation
  */
+
 import { useQuery } from '@tanstack/react-query'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Award, Sparkles, MapPin, Calendar } from 'lucide-react'
+import { Award, Sparkles, MapPin, Calendar, ShieldCheck, ExternalLink, ArrowLeft } from 'lucide-react'
 import api from '../lib/api.js'
 
 export default function PublicPortfolio() {
   const { username } = useParams()
+  const navigate = useNavigate()
   const { data: portfolio, isLoading, error } = useQuery({
     queryKey: ['public-portfolio', username],
     queryFn: () => api.getPublicPortfolio(username),
   })
 
-  if (isLoading) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-primary)' }}>
-      <div className="skeleton" style={{ width: 100, height: 100, borderRadius: '50%' }} />
-    </div>
-  )
-
-  if (error) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-primary)' }}>
-      <div className="glass-card" style={{ padding: '48px', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: 'var(--font-display)', marginBottom: '8px' }}>Portfolio Not Found</h2>
-        <p style={{ color: 'var(--text-secondary)' }}>This portfolio is private or doesn't exist.</p>
+  if (isLoading) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-space)' }}>
+        <div style={{ width: 48, height: 48, borderRadius: '50%', border: '2px solid var(--brand-ice)', borderTopColor: 'transparent', animation: 'spin 1s linear infinite' }} />
       </div>
-    </div>
-  )
+    )
+  }
+
+  if (error || !portfolio) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-space)', padding: '24px' }}>
+        <div className="glass-panel" style={{ padding: '48px 36px', textAlign: 'center', maxWidth: 480 }}>
+          <ShieldCheck size={48} style={{ color: 'var(--brand-ice)', margin: '0 auto 16px' }} />
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
+            Portfolio Not Available
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '24px' }}>
+            This portfolio is set to private by the student or does not exist.
+          </p>
+          <button onClick={() => navigate('/')} className="btn-liquid btn-liquid-primary">
+            Return to CertiNexus AI
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   const { user, certificates = [], skills = [], portfolio_completeness = 0 } = portfolio
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', position: 'relative' }}>
-      <div className="aurora-bg">
-        <div className="aurora-blob aurora-blob-1" />
-        <div className="aurora-blob aurora-blob-2" />
-      </div>
+    <div style={{ minHeight: '100vh', position: 'relative', overflowX: 'hidden' }}>
+      <div className="atmospheric-ambient" />
+      <div className="spatial-grid-overlay" />
 
-      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '48px 24px', position: 'relative', zIndex: 1 }}>
-        {/* Hero */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <div style={{
-            width: 96, height: 96, borderRadius: '50%', margin: '0 auto 20px',
-            background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '2.5rem', fontWeight: 700, color: 'white',
-          }}>{(user.full_name || user.username || 'U')[0].toUpperCase()}</div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 800, marginBottom: '8px' }}>
+      {/* Top Banner Island */}
+      <header className="floating-nav-island" style={{ justifyContent: 'space-between' }}>
+        <div className="nav-brand-island" onClick={() => navigate('/')}>
+          <div className="nav-brand-logo">C</div>
+          <div className="nav-brand-text">
+            <span>CertiNexus</span>
+            <span className="nav-brand-badge">VERIFIED</span>
+          </div>
+          <span className="status-beacon green" title="Verified Credential Record" />
+        </div>
+
+        <button onClick={() => navigate('/login')} className="btn-liquid btn-liquid-ghost" style={{ padding: '6px 16px', fontSize: '0.84rem' }}>
+          Sign In to Platform
+        </button>
+      </header>
+
+      {/* Main Container */}
+      <div style={{ maxWidth: 960, margin: '0 auto', paddingTop: '110px', paddingBottom: '60px', paddingLeft: '24px', paddingRight: '24px', position: 'relative', zIndex: 10 }}>
+        {/* Profile Island */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-panel"
+          style={{ padding: '40px', textAlign: 'center', marginBottom: '28px', borderRadius: '32px' }}
+        >
+          <div
+            style={{
+              width: 88,
+              height: 88,
+              borderRadius: '50%',
+              margin: '0 auto 20px',
+              background: 'linear-gradient(135deg, var(--brand-primary), var(--brand-cyan))',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '2.2rem',
+              fontWeight: 800,
+              color: '#ffffff',
+              boxShadow: '0 0 30px rgba(56, 189, 248, 0.35)',
+            }}
+          >
+            {(user.full_name || user.username || 'U')[0].toUpperCase()}
+          </div>
+
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '6px' }}>
             {user.full_name || user.username}
           </h1>
+
           {user.institution && (
-            <p style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-              <MapPin size={14} /> {user.institution}
+            <p style={{ color: 'var(--brand-ice)', fontSize: '0.95rem', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              <MapPin size={15} />
+              <span>{user.institution}</span>
             </p>
           )}
-          {user.bio && <p style={{ color: 'var(--text-tertiary)', marginTop: '12px', maxWidth: '500px', margin: '12px auto 0' }}>{user.bio}</p>}
 
-          <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', marginTop: '24px' }}>
-            {[
-              { label: 'Certificates', value: certificates.length },
-              { label: 'Skills', value: skills.length },
-              { label: 'Completeness', value: `${portfolio_completeness}%` },
-            ].map((s, i) => (
-              <div key={i}>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-primary-light)' }}>{s.value}</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>{s.label}</div>
+          {user.bio && (
+            <p style={{ color: 'var(--text-secondary)', marginTop: '12px', maxWidth: '520px', margin: '12px auto 0', fontSize: '0.92rem' }}>
+              {user.bio}
+            </p>
+          )}
+
+          {/* Attestation Stats */}
+          <div style={{ display: 'flex', gap: '28px', justifyContent: 'center', marginTop: '28px' }}>
+            <div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                {certificates.length}
               </div>
-            ))}
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Verified Certs
+              </div>
+            </div>
+
+            <div style={{ width: 1, height: 40, background: 'var(--glass-border)' }} />
+
+            <div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--brand-primary-light)' }}>
+                {skills.length}
+              </div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Extracted Skills
+              </div>
+            </div>
+
+            <div style={{ width: 1, height: 40, background: 'var(--glass-border)' }} />
+
+            <div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--brand-emerald)' }}>
+                {portfolio_completeness}%
+              </div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Completeness
+              </div>
+            </div>
           </div>
         </motion.div>
 
-        {/* Skills */}
+        {/* Skills Section */}
         {skills.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-            className="glass-card" style={{ padding: '32px', marginBottom: '24px' }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Sparkles size={20} style={{ color: 'var(--color-secondary)' }} /> Skills
-            </h2>
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="glass-panel"
+            style={{ padding: '32px', marginBottom: '28px' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+              <Sparkles size={18} style={{ color: 'var(--brand-ice)' }} />
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                Demonstrated Competencies
+              </h2>
+            </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {skills.map((s, i) => (
-                <span key={i} style={{
-                  padding: '6px 14px', borderRadius: 'var(--radius-full)',
-                  background: 'rgba(168,85,247,0.12)', border: '1px solid rgba(168,85,247,0.2)',
-                  fontSize: '0.85rem', fontWeight: 500, color: 'var(--color-secondary-light)',
-                }}>{s.skill_name}</span>
+                <span key={i} className="glass-pill active" style={{ fontSize: '0.85rem' }}>
+                  {s.skill_name}
+                </span>
               ))}
             </div>
           </motion.div>
         )}
 
-        {/* Certificates */}
+        {/* Certificates Section */}
         {certificates.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Award size={20} style={{ color: 'var(--color-primary)' }} /> Certificates & Achievements
-            </h2>
-            <div className="grid-cards">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="glass-panel"
+            style={{ padding: '32px' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+              <Award size={18} style={{ color: 'var(--brand-ice)' }} />
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                Accredited Credentials ({certificates.length})
+              </h2>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
               {certificates.map((cert, i) => (
-                <motion.div key={cert.id} className="glass-card"
-                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 + i * 0.05 }}>
+                <div key={i} className="glass-card-spatial" style={{ padding: '18px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span className="category-badge">{cert.category}</span>
-                    {cert.issue_date && <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={12} />{cert.issue_date}</span>}
+                    <span className="glass-pill active" style={{ fontSize: '0.72rem', padding: '3px 8px' }}>
+                      {cert.category || 'Accredited'}
+                    </span>
                   </div>
-                  <h3 style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: '4px' }}>{cert.title || 'Certificate'}</h3>
-                  <p style={{ color: 'var(--text-tertiary)', fontSize: '0.8rem' }}>{cert.organization}</p>
-                </motion.div>
+                  <h3 style={{ fontSize: '0.96rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>
+                    {cert.title || 'Certificate of Completion'}
+                  </h3>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)' }}>
+                    {cert.organization || 'Verified Institution'}
+                  </p>
+                </div>
               ))}
             </div>
           </motion.div>
         )}
-
-        {/* Footer */}
-        <div style={{ textAlign: 'center', marginTop: '64px', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
-          Powered by CertiNexus AI
-        </div>
       </div>
     </div>
   )

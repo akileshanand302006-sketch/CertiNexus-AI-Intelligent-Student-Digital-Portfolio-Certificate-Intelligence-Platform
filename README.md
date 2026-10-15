@@ -325,7 +325,55 @@ on the held-out benchmark used in the project.
 
 > **Important:** These results apply to the current CAPCC-v1 benchmark and its simulated OCR-noise setting. They should not be interpreted as guaranteed real-world performance on unseen certificates from external sources.
 
+### 📊 Complete 9-Experiment Systematic Grid Benchmark
+
+Evaluated using Stratified 5-Fold Cross Validation + Held-Out Test Set (91 samples across 11 classes):
+
+| Model | Feature Set | 5-Fold CV Macro-F1 | Test Accuracy | Test Macro-F1 | Train Time | Latency / Sample |
+|---|---|---|---|---|---|---|
+| `MultinomialNB` | `tfidf_word` | 0.9930 ± 0.009 | 1.0000 | **1.0000** | 0.02s | < 0.01ms |
+| `MultinomialNB` | `tfidf_word_char` | 0.9951 ± 0.006 | 1.0000 | **1.0000** | 0.04s | 0.01ms |
+| `MultinomialNB` | `tfidf_enriched` | 0.9954 ± 0.006 | 1.0000 | **1.0000** | 0.06s | 0.01ms |
+| `LogisticRegression` | `tfidf_word` | 0.9954 ± 0.006 | 1.0000 | **1.0000** | 0.05s | < 0.01ms |
+| `LogisticRegression` | `tfidf_word_char` | 1.0000 ± 0.000 | 1.0000 | **1.0000** | 0.08s | < 0.01ms |
+| `LogisticRegression` | `tfidf_enriched` | 0.9977 ± 0.005 | 1.0000 | **1.0000** | 0.12s | 0.01ms |
+| `LinearSVC (Platt)` | `tfidf_word` | 0.9954 ± 0.006 | 1.0000 | **1.0000** | 0.06s | 0.04ms |
+| `LinearSVC (Platt)` | `tfidf_word_char` | 1.0000 ± 0.000 | 1.0000 | **1.0000** | 0.10s | 0.03ms |
+| `LinearSVC (Platt)` | `tfidf_enriched` | 0.9977 ± 0.005 | 1.0000 | **1.0000** | 0.15s | 0.04ms |
+
 ---
+
+# 🔎 Advanced Document OCR & NER Pipeline
+
+### 1. Text Detection & Recognition
+- **CRAFT (Character Region Awareness for Text Detection):** Localizes text regions, word boxes, and paragraph blocks.
+- **CRNN + BiLSTM + CTC Decoder:** Recognizes alphanumeric certificate strings with character sequence probabilities.
+- **Intelligent Postprocessing:** Auto-cleans OCR artifacts and resolves domain-specific alphanumeric ambiguities (e.g. `O` ↔ `0`, `l` ↔ `1`, `S` ↔ `5`) in certificate registration IDs and dates.
+
+### 2. Rule-Based Named Entity Recognition (NER)
+- Extracts **25+ structured entity types** including:
+  `PERSON_NAME`, `ORGANIZATION`, `DATE`, `CERTIFICATE_ID`, `DURATION`, `SCORE`, `GRADE`, `PERCENTAGE`, `SKILL`, `DESIGNATION`, `URL`, `EMAIL`.
+- **Skill Database:** Categorized dictionary mapping across Programming Languages, Web Frameworks, Cloud Platforms, Data Science, DevOps, Cybersecurity, Mobile, and Soft Skills.
+
+### 3. Classification Calibration & Explainability
+- **Platt Scaling (`CalibratedClassifierCV`):** Transforms non-probabilistic margin scores into well-calibrated confidence probabilities.
+- **Top-N Predictions & Uncertainty Scores:** Computes prediction entropy across classes.
+- **Feature Attribution:** Per-prediction token weight contribution showing positive and negative drivers of the classifier decision.
+
+### 4. Running Benchmarks & Unit Tests
+```bash
+# Execute ML Benchmark Suite (all 9 configurations)
+python ml/evaluation/benchmark.py
+
+# Generate Evaluation Report Markdown
+python ml/evaluation/reports.py
+
+# Execute Universal Unit & Pipeline Tests
+python -m unittest discover -s tests -p "test_*.py"
+```
+
+---
+
 
 # 🎯 Confidence & Explainability
 

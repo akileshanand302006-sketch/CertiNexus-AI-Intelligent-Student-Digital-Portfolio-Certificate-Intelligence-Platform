@@ -68,7 +68,10 @@ def get_current_user(
 
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
+from app.repositories.user_repository import UserRepository
+
 security = HTTPBearer()
+user_repo = UserRepository()
 
 
 def get_current_user_dep(
@@ -80,9 +83,30 @@ def get_current_user_dep(
     user_id = payload.get("sub")
     if not user_id:
         raise HTTPException(status_code=401, detail="Invalid token payload")
+
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+        # Check MongoDB repository
+        mongo_user = user_repo.find_by_id(user_id)
+        if mongo_user:
+            # Rehydrate/sync into local SQLite session for ORM dependencies
+            user = User(
+                id=mongo_user.get("_id") or mongo_user.get("id"),
+                email=mongo_user.get("email"),
+                username=mongo_user.get("username"),
+                hashed_password=mongo_user.get("password_hash", ""),
+                full_name=mongo_user.get("full_name", ""),
+                role=mongo_user.get("role", "student"),
+                is_active=mongo_user.get("is_active", True),
+            )
+            try:
+                db.merge(user)
+                db.commit()
+            except Exception:
+                db.rollback()
+        else:
+            raise HTTPException(status_code=401, detail="User not found")
+
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Account is disabled")
     return user
@@ -90,23 +114,42 @@ def get_current_user_dep(
 
 @router.post("/register", response_model=TokenResponse)
 async def register(data: UserRegister, db: Session = Depends(get_db)):
-    """Register a new user account."""
-    # Check existing
-    if db.query(User).filter(User.email == data.email).first():
+    """Register a new user account in MongoDB Atlas and local session."""
+    # Check existing in SQLite or MongoDB
+    if db.query(User).filter(User.email == data.email).first() or user_repo.find_by_email(data.email):
         raise HTTPException(status_code=400, detail="Email already registered")
-    if db.query(User).filter(User.username == data.username).first():
+    if db.query(User).filter(User.username == data.username).first() or user_repo.find_by_username(data.username):
         raise HTTPException(status_code=400, detail="Username already taken")
 
-    # Create user
+    pwd_hash = hash_password(data.password)
+
+    # 1. Create user in SQLite
     user = User(
         email=data.email,
         username=data.username,
-        hashed_password=hash_password(data.password),
+        hashed_password=pwd_hash,
         full_name=data.full_name,
+        institution=data.institution,
     )
     db.add(user)
     db.commit()
     db.refresh(user)
+
+    # 2. Persist in MongoDB Atlas
+    try:
+        user_repo.create({
+            "_id": user.id,
+            "id": user.id,
+            "email": user.email,
+            "username": user.username,
+            "password_hash": pwd_hash,
+            "full_name": user.full_name or "",
+            "institution": user.institution or "",
+            "role": user.role,
+            "is_active": user.is_active,
+        })
+    except Exception as e:
+        print(f"Notice: MongoDB user persistence fallback: {e}")
 
     # Generate tokens
     token_data = {"sub": user.id, "email": user.email, "role": user.role}
@@ -118,12 +161,57 @@ async def register(data: UserRegister, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=TokenResponse)
 async def login(data: UserLogin, db: Session = Depends(get_db)):
-    """Login with email and password."""
-    user = db.query(User).filter(User.email == data.email).first()
-    if not user or not verify_password(data.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+    """Login with email or username and password via MongoDB Atlas / local session."""
+    identifier = (data.username_or_email or data.email or data.username or "").strip()
+    if not identifier:
+        raise HTTPException(status_code=400, detail="Please provide your email or username")
+    user = db.query(User).filter((User.email == identifier) | (User.username == identifier)).first()
+    
+    # Check MongoDB if not found in local SQLite
+    if not user:
+        mongo_user = user_repo.find_by_email(identifier) or user_repo.find_by_username(identifier)
+        if mongo_user:
+            user = User(
+                id=mongo_user.get("_id") or mongo_user.get("id"),
+                email=mongo_user.get("email"),
+                username=mongo_user.get("username"),
+                hashed_password=mongo_user.get("password_hash"),
+                full_name=mongo_user.get("full_name"),
+                institution=mongo_user.get("institution"),
+                role=mongo_user.get("role", "student"),
+                is_active=mongo_user.get("is_active", True),
+            )
+            try:
+                db.merge(user)
+                db.commit()
+            except Exception:
+                db.rollback()
+
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+        
+    if not verify_password(data.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Incorrect password")
+
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Account is disabled")
+
+    # Sync to MongoDB if not present
+    try:
+        if not user_repo.find_by_email(user.email):
+            user_repo.create({
+                "_id": user.id,
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "password_hash": user.hashed_password,
+                "full_name": user.full_name or "",
+                "institution": user.institution or "",
+                "role": user.role,
+                "is_active": user.is_active,
+            })
+    except Exception as e:
+        print(f"Notice: MongoDB sync notice on login: {e}")
 
     token_data = {"sub": user.id, "email": user.email, "role": user.role}
     return TokenResponse(
@@ -143,7 +231,19 @@ async def refresh_token(data: TokenRefresh, db: Session = Depends(get_db)):
     user_id = payload.get("sub")
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+        mongo_user = user_repo.find_by_id(user_id)
+        if mongo_user:
+            user = User(
+                id=mongo_user.get("_id") or mongo_user.get("id"),
+                email=mongo_user.get("email"),
+                username=mongo_user.get("username"),
+                hashed_password=mongo_user.get("password_hash", ""),
+                full_name=mongo_user.get("full_name", ""),
+                role=mongo_user.get("role", "student"),
+                is_active=mongo_user.get("is_active", True),
+            )
+        else:
+            raise HTTPException(status_code=401, detail="User not found")
 
     token_data = {"sub": user.id, "email": user.email, "role": user.role}
     return TokenResponse(

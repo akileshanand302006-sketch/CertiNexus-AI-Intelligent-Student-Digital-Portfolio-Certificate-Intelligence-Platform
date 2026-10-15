@@ -1,240 +1,318 @@
 /**
- * CertiNexus AI — Landing Page
- * 
- * Premium landing with aurora background and feature showcase.
- * Three.js hero deferred for performance (uses CSS 3D effects instead).
+ * CertiNexus AI — Single-Screen Cinematic Experience & Liquid Glass System
+ * Seamless single-page tab switcher without vertical scrolling
  */
 
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { Award, Brain, Sparkles, Shield, Zap, Globe, ArrowRight } from 'lucide-react'
+import {
+  LayoutDashboard, Upload, Sparkles, BarChart3,
+  User, FileText, Bot, ArrowRight, Play, Sun, Moon,
+  ChevronRight, ChevronLeft, Award, ShieldCheck, Zap
+} from 'lucide-react'
+import StudentExperience from '../components/scene/StudentExperience.jsx'
+import { usePointerDepth } from '../hooks/usePointerDepth.js'
+import { useTheme } from '../context/ThemeContext.jsx'
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i = 0) => ({
-    opacity: 1, y: 0,
-    transition: { delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }
-  })
-}
-
-const features = [
-  { icon: Brain, title: 'AI Classification', desc: 'ML models automatically categorize your certificates with confidence scores', color: '#6366f1' },
-  { icon: Sparkles, title: 'Skill Extraction', desc: 'NLP-powered skill detection and normalization from document text', color: '#a855f7' },
-  { icon: Award, title: 'Digital Portfolio', desc: 'Auto-generated professional portfolio from your achievements', color: '#22d3ee' },
-  { icon: Shield, title: 'Confidence Aware', desc: 'Low-confidence predictions routed to manual review automatically', color: '#10b981' },
-  { icon: Zap, title: 'OCR Pipeline', desc: 'Extract text from PDFs and images with intelligent preprocessing', color: '#f59e0b' },
-  { icon: Globe, title: 'Public Portfolio', desc: 'Share your achievements with a premium shareable portfolio page', color: '#ef4444' },
+export const landingTabs = [
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    icon: LayoutDashboard,
+    badge: 'Spatial Workspace',
+    title: 'Intelligent Student Workspace',
+    description: 'Transform verified credentials and achievements into structured, searchable intelligence with live metrics and skill synthesis.',
+    action: 'Enter Dashboard',
+    route: '/dashboard',
+    scene: 0,
+  },
+  {
+    id: 'upload',
+    label: 'Upload',
+    icon: Upload,
+    badge: 'Scanning Chamber',
+    title: 'Document Processing & Auto-Extraction',
+    description: 'Drag & drop certificates directly into a translucent scanning chamber with real-time text detection, organization recognition, and entity extraction.',
+    action: 'Upload Certificate',
+    route: '/upload',
+    scene: 2,
+  },
+  {
+    id: 'portfolio',
+    label: 'Portfolio',
+    icon: User,
+    badge: 'Digital Credential Web',
+    title: 'Verified Digital Portfolio & Document Viewer',
+    description: 'Interactive digital portfolio with instant document preview, verified achievement badges, competency profiles, and shareable public links.',
+    action: 'Preview Portfolio',
+    route: '/portfolio',
+    scene: 3,
+  },
+  {
+    id: 'skills',
+    label: 'Skills',
+    icon: Sparkles,
+    badge: 'Competency Graph',
+    title: 'Skill Intelligence Constellation',
+    description: 'Extracted competencies form glowing glass chips mapping academic achievements into verified industry and software skills.',
+    action: 'Explore Skills',
+    route: '/skills',
+    scene: 5,
+  },
+  {
+    id: 'analytics',
+    label: 'Analytics',
+    icon: BarChart3,
+    badge: 'Achievement Analytics',
+    title: 'Visual Analytics & Readiness Index',
+    description: 'Comprehensive visual breakdowns of your achievements across categories, skill growth timelines, and academic readiness indices.',
+    action: 'View Analytics',
+    route: '/analytics',
+    scene: 4,
+  },
+  {
+    id: 'resume',
+    label: 'Resume',
+    icon: FileText,
+    badge: 'ATS-Optimized Engine',
+    title: 'Automated Resume Synthesis',
+    description: 'Generate formatted, ATS-compliant resumes directly from verified certificate achievements, course milestones, and extracted skills.',
+    action: 'Build Resume',
+    route: '/resume',
+    scene: 5,
+  },
+  {
+    id: 'assistant',
+    label: 'AI Assistant',
+    icon: Bot,
+    badge: 'Intelligent Advisor',
+    title: 'Certificate & Career AI Assistant',
+    description: 'Ask questions about your uploaded certificates, query verified skills and dates, detect career skill gaps, and receive personalized certification suggestions.',
+    action: 'Launch Assistant',
+    route: '/assistant',
+    scene: 5,
+  },
 ]
 
 export default function Landing() {
+  usePointerDepth()
+  const { isDark, toggleTheme } = useTheme()
   const navigate = useNavigate()
+  const [activeTabIdx, setActiveTabIdx] = useState(0)
+
+  const currentTab = landingTabs[activeTabIdx] || landingTabs[0]
+
+  const nextTab = () => {
+    setActiveTabIdx((prev) => (prev + 1) % landingTabs.length)
+  }
+
+  const prevTab = () => {
+    setActiveTabIdx((prev) => (prev - 1 + landingTabs.length) % landingTabs.length)
+  }
 
   return (
-    <div style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
-      {/* Aurora Background */}
-      <div className="aurora-bg">
-        <div className="aurora-blob aurora-blob-1" />
-        <div className="aurora-blob aurora-blob-2" />
-        <div className="aurora-blob aurora-blob-3" />
-      </div>
+    <div style={{ height: '100vh', width: '100vw', overflow: 'hidden', position: 'relative' }}>
+      {/* Atmospheric Base Overlays */}
+      <div className="atmospheric-ambient" />
+      <div className="spatial-grid-overlay" />
 
-      {/* Nav */}
-      <nav style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-        padding: '16px 32px',
-        background: 'rgba(10, 11, 15, 0.7)',
-        backdropFilter: 'blur(16px)',
-        borderBottom: '1px solid var(--glass-border)',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{
-            width: 32, height: 32, borderRadius: '8px',
-            background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 800, color: 'white', fontFamily: 'var(--font-display)',
-            fontSize: '0.9rem',
-          }}>C</div>
-          <span style={{
-            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem'
-          }}>CertiNexus AI</span>
+      {/* 3D Student Cinematic Film Experience */}
+      <StudentExperience
+        progress={activeTabIdx / (landingTabs.length - 1)}
+        scene={currentTab.scene}
+        showCertificate={activeTabIdx >= 1}
+      />
+
+      {/* Floating Top Liquid Glass Navigation Island */}
+      <header className="floating-nav-island" role="navigation" aria-label="Main Navigation">
+        <div className="nav-brand-island" onClick={() => navigate('/')}>
+          <div className="nav-brand-logo">C</div>
+          <div className="nav-brand-text">
+            <span>CertiNexus</span>
+            <span className="nav-brand-badge">STUDIO</span>
+          </div>
+          <span className="status-beacon" title="System Active" />
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button className="btn btn-ghost btn-sm" onClick={() => navigate('/login')}>Sign In</button>
-          <button className="btn btn-primary btn-sm" onClick={() => navigate('/register')}>Get Started</button>
-        </div>
-      </nav>
 
-      {/* Hero */}
-      <section style={{
-        paddingTop: '160px', paddingBottom: '100px',
-        textAlign: 'center', maxWidth: '800px', margin: '0 auto',
-        padding: '160px 24px 100px',
-      }}>
-        <motion.div
-          variants={fadeUp} initial="hidden" animate="visible" custom={0}
-          style={{
-            display: 'inline-block', padding: '6px 16px', borderRadius: 'var(--radius-full)',
-            background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.2)',
-            fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-primary-light)',
-            marginBottom: '24px',
-          }}>
-          Powered by Machine Learning
-        </motion.div>
+        {/* Exact Tab Names Navigation Pills */}
+        <nav className="nav-links-island">
+          {landingTabs.map((tab, idx) => {
+            const Icon = tab.icon
+            const isActive = activeTabIdx === idx
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTabIdx(idx)}
+                className={`nav-link-capsule ${isActive ? 'active' : ''}`}
+                style={{ cursor: 'pointer', background: 'transparent', border: 'none' }}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeLandingTabPill"
+                    className="nav-active-pill"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <Icon size={15} style={{ transition: 'transform 0.2s', transform: isActive ? 'scale(1.1)' : 'scale(1)' }} />
+                <span>{tab.label}</span>
+              </button>
+            )
+          })}
+        </nav>
 
-        <motion.h1
-          variants={fadeUp} initial="hidden" animate="visible" custom={1}
-          style={{
-            fontFamily: 'var(--font-display)', fontSize: 'clamp(2.5rem, 5vw, 4rem)',
-            fontWeight: 800, lineHeight: 1.1, marginBottom: '24px',
-            background: 'linear-gradient(135deg, #f1f5f9 30%, #6366f1 60%, #22d3ee 90%)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}>
-          Your Achievements.<br />Intelligently Organized.
-        </motion.h1>
-
-        <motion.p
-          variants={fadeUp} initial="hidden" animate="visible" custom={2}
-          style={{
-            fontSize: '1.15rem', color: 'var(--text-secondary)',
-            lineHeight: 1.7, marginBottom: '40px', maxWidth: '600px', margin: '0 auto 40px',
-          }}>
-          An intelligent document classification system that transforms your certificates
-          into a structured digital portfolio using OCR, NLP, and machine learning.
-        </motion.p>
-
-        <motion.div
-          variants={fadeUp} initial="hidden" animate="visible" custom={3}
-          style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button className="btn btn-primary btn-lg" onClick={() => navigate('/register')}
-            style={{ fontSize: '1rem' }}>
-            Start Building Your Portfolio <ArrowRight size={18} />
+        {/* Actions: Theme Toggle + Sign In / Register */}
+        <div className="nav-actions-island">
+          <button
+            onClick={toggleTheme}
+            className="icon-action-btn"
+            title={`Switch to ${isDark ? 'Pearl Daylight' : 'Obsidian Dark'} mode`}
+            aria-label="Toggle theme"
+          >
+            {isDark ? <Moon size={16} /> : <Sun size={16} style={{ color: '#f59e0b' }} />}
           </button>
-          <button className="btn btn-ghost btn-lg" onClick={() => navigate('/login')}
-            style={{ fontSize: '1rem' }}>
+          <button
+            onClick={() => navigate('/login')}
+            className="btn-liquid btn-liquid-ghost"
+            style={{ padding: '7px 16px', fontSize: '0.84rem' }}
+          >
             Sign In
           </button>
-        </motion.div>
-
-        {/* Floating glass cards */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          style={{
-            marginTop: '80px',
-            display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '16px', maxWidth: '600px', margin: '80px auto 0',
-          }}>
-          {[
-            { label: 'Category', value: 'Hackathon', confidence: '94%' },
-            { label: 'Skills', value: 'Python, ML', confidence: 'Detected' },
-            { label: 'Status', value: 'Classified', confidence: 'High' },
-          ].map((item, i) => (
-            <motion.div key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 + i * 0.15 }}
-              className="glass-card" style={{ padding: '16px', textAlign: 'left' }}>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', marginBottom: '4px' }}>
-                {item.label}
-              </div>
-              <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: '4px' }}>
-                {item.value}
-              </div>
-              <div className={`confidence-badge confidence-high`} style={{ fontSize: '0.65rem' }}>
-                {item.confidence}
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </section>
-
-      {/* Features */}
-      <section style={{
-        padding: '80px 24px', maxWidth: '1200px', margin: '0 auto',
-      }}>
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <h2 style={{
-            fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 700,
-            marginBottom: '12px',
-          }}>
-            Intelligent Certificate Processing
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', maxWidth: '500px', margin: '0 auto' }}>
-            From unstructured documents to structured portfolio data, powered by ML.
-          </p>
-        </motion.div>
-
-        <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-          gap: '20px',
-        }}>
-          {features.map((feat, i) => (
-            <motion.div key={i}
-              className="glass-card"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: '12px',
-                background: `${feat.color}18`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                marginBottom: '16px',
-              }}>
-                <feat.icon size={22} style={{ color: feat.color }} />
-              </div>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, marginBottom: '8px' }}>
-                {feat.title}
-              </h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6 }}>
-                {feat.desc}
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section style={{ padding: '80px 24px 120px', textAlign: 'center' }}>
-        <motion.div
-          className="glass-card"
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          style={{
-            maxWidth: '700px', margin: '0 auto', padding: '48px',
-            background: 'linear-gradient(135deg, rgba(99,102,241,0.08), rgba(168,85,247,0.06))',
-          }}>
-          <h2 style={{
-            fontFamily: 'var(--font-display)', fontSize: '1.75rem', fontWeight: 700,
-            marginBottom: '12px',
-          }}>
-            Ready to build your intelligent portfolio?
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '28px' }}>
-            Upload your certificates and let AI organize your achievements.
-          </p>
-          <button className="btn btn-primary btn-lg" onClick={() => navigate('/register')}>
-            Get Started Free <ArrowRight size={18} />
+          <button
+            onClick={() => navigate('/register')}
+            className="btn-liquid btn-liquid-primary"
+            style={{ padding: '7px 18px', fontSize: '0.84rem' }}
+          >
+            Get Started
           </button>
-        </motion.div>
-      </section>
+        </div>
+      </header>
 
-      {/* Footer */}
-      <footer style={{
-        padding: '24px', textAlign: 'center',
-        borderTop: '1px solid var(--glass-border)',
-        color: 'var(--text-muted)', fontSize: '0.8rem',
+      {/* Floating Spatial Information Sheet (Single-Screen Centered Bottom) */}
+      <div style={{
+        position: 'fixed',
+        bottom: 32,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: 'calc(100% - 48px)',
+        maxWidth: '860px',
+        zIndex: 20,
       }}>
-        CertiNexus AI — 20MSSL12 Machine Learning Lab Project
-      </footer>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentTab.id}
+            initial={{ opacity: 0, y: 18, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -14, scale: 0.98 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            className="glass-panel glass-specular-glow"
+            style={{ padding: '28px 34px', borderRadius: '30px' }}
+          >
+            {/* Top Pill Bar */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span className="glass-pill active" style={{ fontSize: '0.74rem', padding: '5px 12px' }}>
+                  <span className="status-beacon" style={{ width: 6, height: 6 }} />
+                  {currentTab.badge}
+                </span>
+                <span className="glass-pill" style={{ fontSize: '0.74rem', padding: '5px 12px', textTransform: 'uppercase' }}>
+                  {currentTab.label} ({activeTabIdx + 1} OF {landingTabs.length})
+                </span>
+              </div>
+
+              {/* Quick Skip to App */}
+              <button
+                onClick={() => navigate('/dashboard')}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-tertiary)',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                Enter App <ChevronRight size={14} />
+              </button>
+            </div>
+
+            {/* Section Title & Description */}
+            <h1 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(1.6rem, 2.8vw, 2.2rem)',
+              fontWeight: 800,
+              letterSpacing: '-0.03em',
+              lineHeight: 1.15,
+              marginBottom: '10px',
+              color: 'var(--text-primary)',
+            }}>
+              {currentTab.title}
+            </h1>
+
+            <p style={{
+              color: 'var(--text-secondary)',
+              fontSize: '0.96rem',
+              lineHeight: 1.55,
+              maxWidth: '680px',
+              marginBottom: '22px',
+            }}>
+              {currentTab.description}
+            </p>
+
+            {/* Interactive Action Controls */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => navigate(currentTab.route)}
+                className="btn-liquid btn-liquid-primary"
+                style={{ padding: '10px 22px' }}
+              >
+                <span>{currentTab.action}</span>
+                <ArrowRight size={16} />
+              </button>
+
+              <button
+                onClick={prevTab}
+                className="btn-liquid btn-liquid-ghost"
+                style={{ padding: '10px 14px' }}
+                title="Previous Tab"
+              >
+                <ChevronLeft size={16} />
+              </button>
+
+              <button
+                onClick={nextTab}
+                className="btn-liquid btn-liquid-ghost"
+                style={{ padding: '10px 18px', gap: '6px' }}
+                title="Next Tab"
+              >
+                <span>Next Tab</span>
+                <ChevronRight size={16} />
+              </button>
+
+              {/* Tab Progress Indicator */}
+              <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                {landingTabs.map((t, idx) => (
+                  <div
+                    key={t.id}
+                    onClick={() => setActiveTabIdx(idx)}
+                    style={{
+                      width: activeTabIdx === idx ? 24 : 8,
+                      height: 6,
+                      borderRadius: 3,
+                      background: activeTabIdx === idx ? 'var(--brand-ice)' : 'rgba(255, 255, 255, 0.2)',
+                      cursor: 'pointer',
+                      transition: 'all 0.25s ease',
+                    }}
+                    title={t.label}
+                  />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   )
 }

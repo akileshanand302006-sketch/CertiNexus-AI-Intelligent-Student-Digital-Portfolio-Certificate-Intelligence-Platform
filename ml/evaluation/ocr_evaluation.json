@@ -1,0 +1,6 @@
+{
+  "cer": 0.0,
+  "wer": 0.0,
+  "num_test_samples": 4,
+  "engine": "EasyOCR + PyMuPDF Hybrid Raster"
+}

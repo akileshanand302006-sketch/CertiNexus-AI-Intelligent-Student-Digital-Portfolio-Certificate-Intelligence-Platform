@@ -133,3 +133,103 @@ async def generate_resume(
         "status": "success",
         "resume": resume_sections,
     }
+
+
+class SaveResumeToPortfolioRequest(BaseModel):
+    title: Optional[str] = "FlowCV Professional Resume"
+    headline: Optional[str] = None
+    summary: Optional[str] = None
+    template: str = "flow_modern"
+    accent: Optional[str] = "indigo"
+    skills: List[str] = []
+    projects: Optional[List[Dict[str, Any]]] = None
+    experience_bullets: Optional[List[str]] = None
+    contact_phone: Optional[str] = None
+    contact_location: Optional[str] = None
+
+
+@router.post("/save-to-portfolio")
+async def save_resume_to_portfolio(
+    payload: SaveResumeToPortfolioRequest,
+    user: User = Depends(get_current_user_dep),
+    db: Session = Depends(get_db),
+):
+    """Save the customized FlowCV resume as an accredited document in the user's digital portfolio."""
+    import uuid
+    from datetime import datetime
+
+    cert_title = f"FlowCV Resume — {payload.headline or 'Professional CV'}"
+
+    # Check if an existing FlowCV resume exists for this user to update, or create a new one
+    existing_resume = (
+        db.query(Certificate)
+        .filter(Certificate.user_id == user.id, Certificate.document_type == "resume", Certificate.title.like("FlowCV Resume%"))
+        .first()
+    )
+
+    if existing_resume:
+        existing_resume.title = cert_title
+        existing_resume.category = "Resume / CV"
+        existing_resume.ai_category = "Resume / CV"
+        existing_resume.ai_summary = payload.summary or "FlowCV ATS-Optimized Professional Resume"
+        existing_resume.extracted_skills = payload.skills
+        existing_resume.extraction_data = {
+            "headline": payload.headline,
+            "summary": payload.summary,
+            "template": payload.template,
+            "accent": payload.accent,
+            "projects": payload.projects,
+            "experience_bullets": payload.experience_bullets,
+            "phone": payload.contact_phone,
+            "location": payload.contact_location,
+            "saved_at": datetime.utcnow().isoformat(),
+        }
+        existing_resume.updated_at = datetime.utcnow()
+        db.commit()
+        db.refresh(existing_resume)
+        return {
+            "status": "success",
+            "message": "Updated FlowCV Resume in Digital Portfolio",
+            "certificate_id": existing_resume.id,
+            "title": existing_resume.title,
+        }
+    else:
+        new_resume = Certificate(
+            id=str(uuid.uuid4()),
+            user_id=user.id,
+            title=cert_title,
+            recipient_name=user.full_name or user.username,
+            organization="CertiNexus FlowCV Resume Studio",
+            document_type="resume",
+            category="Resume / CV",
+            ai_category="Resume / CV",
+            status="completed",
+            ai_confidence=0.99,
+            ai_confidence_level="high",
+            ai_summary=payload.summary or "FlowCV ATS-Optimized Professional Resume",
+            extracted_skills=payload.skills,
+            is_reviewed=True,
+            is_public=user.portfolio_public,
+            created_at=datetime.utcnow(),
+            extraction_data={
+                "headline": payload.headline,
+                "summary": payload.summary,
+                "template": payload.template,
+                "accent": payload.accent,
+                "projects": payload.projects,
+                "experience_bullets": payload.experience_bullets,
+                "phone": payload.contact_phone,
+                "location": payload.contact_location,
+                "saved_at": datetime.utcnow().isoformat(),
+            },
+        )
+        db.add(new_resume)
+        db.commit()
+        db.refresh(new_resume)
+        return {
+            "status": "success",
+            "message": "Added FlowCV Resume to Digital Portfolio",
+            "certificate_id": new_resume.id,
+            "title": new_resume.title,
+        }
+

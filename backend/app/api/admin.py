@@ -139,3 +139,29 @@ async def get_confusion_matrix(user: User = Depends(get_current_user_dep)):
 
     with open(cm_path, 'r', encoding='utf-8') as f:
         return json.load(f)
+
+
+@router.get("/models")
+async def list_models(user: User = Depends(get_current_user_dep)):
+    """List available ML models and production metadata."""
+    models_dir = os.path.join(PROJECT_ROOT, "ml", "models")
+    prod_meta = os.path.join(models_dir, "production", "model_metadata.json")
+    prod_info = {}
+    if os.path.exists(prod_meta):
+        with open(prod_meta, "r", encoding="utf-8") as f:
+            prod_info = json.load(f)
+
+    candidates = []
+    candidates_dir = os.path.join(models_dir, "candidates")
+    if os.path.exists(candidates_dir):
+        for fname in os.listdir(candidates_dir):
+            if fname.endswith(".joblib") or fname.endswith(".json"):
+                candidates.append(fname)
+
+    return {
+        "production_model": prod_info,
+        "available_candidates": candidates,
+        "pipeline_version": "2.0.0",
+        "supported_categories": prod_info.get("classes", []),
+    }
+

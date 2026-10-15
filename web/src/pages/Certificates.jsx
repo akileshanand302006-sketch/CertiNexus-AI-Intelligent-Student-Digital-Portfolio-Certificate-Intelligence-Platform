@@ -1,17 +1,18 @@
 /**
- * CertiNexus AI — Certificates List
+ * CertiNexus AI — Liquid Glass Certificate Gallery
+ * Filter Pills, Spatial 3D Tilt Cards, and Real Data Integration
  */
 
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { Award, Search, Filter, Plus } from 'lucide-react'
+import { Award, Search, Plus, Sparkles, Calendar, Building, ChevronRight } from 'lucide-react'
 import api from '../lib/api.js'
 
 export default function Certificates() {
   const [searchQuery, setSearchQuery] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('')
   const navigate = useNavigate()
 
   const { data: certificates = [], isLoading } = useQuery({
@@ -19,115 +20,166 @@ export default function Certificates() {
     queryFn: () => api.getCertificates(),
   })
 
-  const filtered = certificates.filter(cert => {
-    const matchesSearch = !searchQuery ||
+  const filtered = certificates.filter((cert) => {
+    const matchesSearch =
+      !searchQuery ||
       (cert.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (cert.organization || '').toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = !categoryFilter || cert.category === categoryFilter
+    const matchesCategory = !selectedCategory || cert.category === selectedCategory
     return matchesSearch && matchesCategory
   })
 
-  const categories = [...new Set(certificates.map(c => c.category).filter(Boolean))]
+  const categories = [...new Set(certificates.map((c) => c.category).filter(Boolean))]
 
   return (
-    <div>
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+    <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h1>Certificates</h1>
-          <p>{certificates.length} certificates in your portfolio</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+            <span className="status-beacon" />
+            <span style={{ fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--brand-ice)' }}>
+              Accredited Credentials
+            </span>
+          </div>
+          <h1 className="spatial-hero-title">
+            Certificate Gallery
+          </h1>
+          <p className="spatial-hero-subtitle">
+            {certificates.length} verified digital credentials secured and analyzed.
+          </p>
         </div>
-        <button className="btn btn-primary" onClick={() => navigate('/upload')}>
-          <Plus size={16} /> Upload
+
+        <button
+          onClick={() => navigate('/upload')}
+          className="btn-liquid btn-liquid-primary"
+        >
+          <Plus size={16} />
+          <span>Upload Certificate</span>
         </button>
       </div>
 
-      {/* Search & Filter */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
-        <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
-          <Search size={16} style={{
-            position: 'absolute', left: '14px', top: '50%',
-            transform: 'translateY(-50%)', color: 'var(--text-muted)',
-          }} />
-          <input className="glass-input" placeholder="Search certificates..."
-            value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-            style={{ paddingLeft: '40px' }} />
+      {/* Filter and Search Island */}
+      <div className="glass-panel" style={{ padding: '16px 20px', marginBottom: '28px', borderRadius: '24px' }}>
+        <div style={{ display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative', flex: 1, minWidth: '240px' }}>
+            <Search
+              size={16}
+              style={{
+                position: 'absolute',
+                left: '16px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'var(--text-muted)',
+              }}
+            />
+            <input
+              className="glass-input-spatial"
+              placeholder="Search by title, issuer, or skill..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ paddingLeft: '44px', borderRadius: 'var(--radius-full)' }}
+            />
+          </div>
+
+          {/* Category Filter Pills */}
+          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+            <button
+              onClick={() => setSelectedCategory('')}
+              className={`glass-pill ${!selectedCategory ? 'active' : ''}`}
+            >
+              All ({certificates.length})
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`glass-pill ${selectedCategory === cat ? 'active' : ''}`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
-        <select className="glass-input" style={{ width: '200px' }}
-          value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)}>
-          <option value="">All Categories</option>
-          {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-        </select>
       </div>
 
-      {/* Grid */}
+      {/* Gallery Cards Grid */}
       {isLoading ? (
-        <div className="grid-cards">
-          {[1,2,3,4,5,6].map(i => (
-            <div key={i} className="glass-card">
-              <div className="skeleton" style={{ height: '20px', width: '60%', marginBottom: '12px' }} />
-              <div className="skeleton" style={{ height: '16px', width: '80%', marginBottom: '8px' }} />
-              <div className="skeleton" style={{ height: '14px', width: '40%' }} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="glass-panel" style={{ padding: '24px', height: '180px' }}>
+              <div style={{ width: '40%', height: '20px', borderRadius: 10, background: 'var(--glass-pill)', marginBottom: '14px' }} />
+              <div style={{ width: '80%', height: '24px', borderRadius: 8, background: 'var(--glass-pill)', marginBottom: '10px' }} />
+              <div style={{ width: '60%', height: '16px', borderRadius: 8, background: 'var(--glass-pill)' }} />
             </div>
           ))}
         </div>
       ) : filtered.length > 0 ? (
-        <div className="grid-cards">
-          {filtered.map((cert, i) => (
-            <motion.div key={cert.id} className="glass-card"
-              initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+          {filtered.map((cert, idx) => (
+            <motion.div
+              key={cert.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.04 }}
               onClick={() => navigate(`/certificates/${cert.id}`)}
-              style={{ cursor: 'pointer' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <span className="category-badge">{cert.category || 'Uncategorized'}</span>
-                {cert.ai_confidence != null && (
-                  <span className={`confidence-badge confidence-${cert.ai_confidence_level || 'medium'}`}>
-                    {(cert.ai_confidence * 100).toFixed(0)}%
+              className="glass-card-spatial glass-specular-glow"
+              style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+            >
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                  <span className="glass-pill active" style={{ fontSize: '0.74rem', padding: '4px 10px' }}>
+                    {cert.category || 'Accredited'}
                   </span>
-                )}
-              </div>
-              <h3 style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '6px' }}>
-                {cert.title || cert.original_filename || 'Untitled Certificate'}
-              </h3>
-              <p style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem', marginBottom: '4px' }}>
-                {cert.organization || 'Unknown Organization'}
-              </p>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
-                {cert.issue_date || new Date(cert.created_at).toLocaleDateString()}
-              </p>
-              {cert.extracted_skills?.length > 0 && (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '10px' }}>
-                  {cert.extracted_skills.slice(0, 3).map((s, j) => (
-                    <span key={j} style={{
-                      padding: '2px 8px', borderRadius: 'var(--radius-full)',
-                      background: 'rgba(168,85,247,0.1)', fontSize: '0.65rem',
-                      color: 'var(--color-secondary-light)', fontWeight: 500,
-                    }}>{s}</span>
-                  ))}
-                  {cert.extracted_skills.length > 3 && (
-                    <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
-                      +{cert.extracted_skills.length - 3}
+                  {cert.ai_confidence != null && (
+                    <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--brand-emerald)' }}>
+                      {(cert.ai_confidence * 100).toFixed(0)}% Match
                     </span>
                   )}
                 </div>
-              )}
+
+                <h2 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px', lineHeight: 1.3 }}>
+                  {cert.title || cert.original_filename || 'Achievement Certificate'}
+                </h2>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-tertiary)', fontSize: '0.82rem', marginBottom: '4px' }}>
+                  <Building size={14} />
+                  <span>{cert.organization || 'Verified Institution'}</span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.78rem' }}>
+                  <Calendar size={13} />
+                  <span>{cert.issue_date || (cert.created_at ? new Date(cert.created_at).toLocaleDateString() : 'Verified')}</span>
+                </div>
+              </div>
+
+              {/* Skills Tags */}
+              <div style={{ marginTop: '18px', paddingTop: '14px', borderTop: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {cert.extracted_skills && cert.extracted_skills.slice(0, 3).map((s, j) => (
+                    <span key={j} className="glass-pill" style={{ fontSize: '0.7rem', padding: '2px 8px' }}>
+                      {typeof s === 'string' ? s : s.name}
+                    </span>
+                  ))}
+                </div>
+                <ChevronRight size={16} style={{ color: 'var(--brand-ice)' }} />
+              </div>
             </motion.div>
           ))}
         </div>
       ) : (
-        <div className="glass-card" style={{ textAlign: 'center', padding: '64px 32px' }}>
-          <Award size={48} style={{ color: 'var(--text-muted)', marginBottom: '16px' }} />
-          <h3 style={{ fontWeight: 600, marginBottom: '8px', fontFamily: 'var(--font-display)' }}>
-            {searchQuery || categoryFilter ? 'No matching certificates' : 'No certificates yet'}
-          </h3>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>
-            {searchQuery || categoryFilter ? 'Try adjusting your search or filters' : 'Upload your first certificate to get started'}
+        <div className="glass-panel" style={{ textAlign: 'center', padding: '60px 24px', borderRadius: '28px' }}>
+          <Award size={40} style={{ color: 'var(--brand-ice)', marginBottom: '14px' }} />
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
+            No matching certificates found
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '20px' }}>
+            Try adjusting your search criteria or upload a new certificate.
           </p>
-          {!searchQuery && !categoryFilter && (
-            <button className="btn btn-primary" onClick={() => navigate('/upload')}>
-              <Plus size={16} /> Upload Certificate
-            </button>
-          )}
+          <button onClick={() => navigate('/upload')} className="btn-liquid btn-liquid-primary">
+            <Plus size={16} />
+            <span>Upload Certificate</span>
+          </button>
         </div>
       )}
     </div>
