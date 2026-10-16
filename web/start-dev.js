@@ -103,7 +103,7 @@ async function main() {
       {
         cwd: projectRoot,
         stdio: 'inherit',
-        shell: process.platform === 'win32',
+        shell: false,
       }
     )
 
